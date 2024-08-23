@@ -194,7 +194,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Tobias Kramer - t.kramer@berkeley.edu
+Toby Kramer - t.kramer@berkeley.edu
 
 Project Link: [t-kramer/beat](https://github.com/t-kramer/beat)
 
@@ -205,7 +205,7 @@ Project Link: [t-kramer/beat](https://github.com/t-kramer/beat)
 <!-- ACKNOWLEDGMENTS -->
 ## Contributors
 
-* [Tobias Kramer]() @ [CBE](https://cbe.berkeley.edu/), UC Berkeley | Web Tool Development & Data Analysis
+* [Toby Kramer]() @ [CBE](https://cbe.berkeley.edu/), UC Berkeley | Web Tool Development & Data Analysis
 * [Bilge Kobas]() @ [SenseLab](https://www.arc.ed.tum.de/klima/forschung/forschungslabore/senselab/), TU Munich | Literature Review, Data Analysis & Management
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -230,7 +230,3 @@ Project Link: [t-kramer/beat](https://github.com/t-kramer/beat)
 [Python.org]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
 [Python-url]: https://www.python.org/
 [Dash-url]:https://dash.plotly.com/
-
-
-
-
