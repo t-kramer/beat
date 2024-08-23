@@ -1,0 +1,30 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# data files
+data/
+
+# venv directories
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# VS Code settings
+.vscode/
+
+# macOS specific files
+.DS_Store
+
+# log files
+*.log
+
+# temporary files
+*.tmp
+*.temp
