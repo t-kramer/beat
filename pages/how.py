@@ -10,8 +10,13 @@ from utils.config_file import (
 )
 
 from components.tabs import standard_tab_layout
+from components.charts import sunburst_sensors
+from components.data import load_data
 
 dash.register_page(__name__, path=URLS.HOW.value, order=3)
 
+df = load_data()
+
+
 def layout():
-    return standard_tab_layout()
+    return standard_tab_layout([sunburst_sensors(df)])

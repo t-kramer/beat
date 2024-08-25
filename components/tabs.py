@@ -10,7 +10,10 @@ from utils.config_file import (
 )
 
 
-def standard_tab_layout(fig={}):
+def standard_tab_layout(figures: list):
+
+    graph_components = [dcc.Graph(figure=fig) for fig in figures]
+
     return dbc.Container(
         children=[
             dbc.Row(
@@ -39,11 +42,7 @@ def standard_tab_layout(fig={}):
                     ),
                     dbc.Col(
                         dbc.Row(
-                            children=[
-                                dcc.Graph(
-                                    figure=fig,
-                                ),
-                            ],
+                            children=graph_components,
                         ),
                         width=Dimensions.column_width_primary.value,
                     ),

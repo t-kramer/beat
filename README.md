@@ -142,7 +142,7 @@ playwright install
 
 #### Test generation
 
-Detailed guide on how to generate tests can be found [here](https://playwright.dev/python/docs/codegen)
+Detailed guide on how to generate tests can be found [here](https://playwright.dev/python/docs/codegen).
 
 ```
 playwright codegen http://localhost:9090

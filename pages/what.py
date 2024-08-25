@@ -7,7 +7,7 @@ import dash_bootstrap_components as dbc
 from dash import dcc
 from dash import Dash, dcc, html, Input, Output, callback
 
-from components.charts import physio_sunburst, bar_year, map_country, pie_building_type
+from components.charts import bar_year, map_country, pie_building_type
 from components.data_table import data_table
 from components.input import parameter_checklist
 

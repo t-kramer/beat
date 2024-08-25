@@ -18,7 +18,6 @@ app = Dash(
     ],
 )
 
-
 app.layout = dbc.Container(
     fluid=True,
     style={"padding": "0"},

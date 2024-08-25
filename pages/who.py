@@ -13,5 +13,6 @@ from components.tabs import standard_tab_layout
 
 dash.register_page(__name__, path=URLS.WHO.value, order=4)
 
+
 def layout():
-    return standard_tab_layout()
+    return standard_tab_layout([])

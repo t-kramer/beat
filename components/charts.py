@@ -5,18 +5,6 @@ import plotly.graph_objects as go
 from utils.config_file import CHART_LAYOUT
 
 
-def physio_sunburst(df):
-
-    fig = px.sunburst(
-        df,
-        path=["physio-parameter", "physio-sensor-type", "physio-body-site"],
-        # title='Physiological Parameters and Locations',
-        template=CHART_LAYOUT.template.value,
-    )
-
-    return fig
-
-
 def bar_year(df):
 
     df["exp-id"] = df["exp-id"].astype(str)
@@ -73,7 +61,7 @@ def pie_building_type(df):
     return fig
 
 
-def body_site_map():
+def body_site_map(df):
 
     #! This is dummy data for testing purposes
     testing_location_counts = pd.DataFrame(
@@ -198,6 +186,55 @@ def body_site_map():
         width=800,
         height=640,
         margin=dict(l=10, r=10, t=10, b=10),
+    )
+
+    return fig
+
+
+def bar_parameter(df):
+
+    parameter_counts = df.groupby("physio-parameter")["exp-id"].nunique()
+    total_experiments = df["exp-id"].nunique()
+
+    parameter_counts = parameter_counts.reset_index(name="exp-id count")
+    parameter_counts["exp-id percentage"] = (
+        parameter_counts["exp-id count"] / total_experiments
+    ) * 100
+    parameter_counts_sorted = parameter_counts.sort_values(
+        "exp-id percentage", ascending=True
+    )
+
+    fig = px.bar(
+        parameter_counts_sorted,
+        x="exp-id percentage",
+        y="physio-parameter",
+        labels={
+            "physio-parameter": "Physiological Parameter [-]",
+            "exp-id percentage": "Percentage of Studies",
+        },
+        orientation="h",
+    )
+
+    fig.update_layout(
+        xaxis_title="Percentage of Studies [%]",
+        yaxis_title="Physiological Parameter [-]",
+        template="plotly_white",
+    )
+
+    return fig
+
+
+def sunburst_sensors(df):
+
+    data = df[
+        ["physio-parameter", "physio-sensor-type", "physio-sensor-brand"]
+    ].dropna()
+
+    fig = px.sunburst(
+        data,
+        path=["physio-parameter", "physio-sensor-type", "physio-sensor-brand"],
+        height=600,  # to make chart bigger than default
+        template=CHART_LAYOUT.template.value,
     )
 
     return fig
