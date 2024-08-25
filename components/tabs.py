@@ -6,7 +6,7 @@ import dash_bootstrap_components as dbc
 from components.input import standard_dropdown
 
 from utils.config_file import (
-    Dimensions,
+    PAGE_LAYOUT,
 )
 
 
@@ -20,7 +20,7 @@ def standard_tab_layout(figures: list):
                 children=[
                     dbc.Col(
                         standard_dropdown(),
-                        width=Dimensions.column_width_secondary.value,
+                        width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
                     dbc.Col(dbc.Container()),
                 ]
@@ -37,14 +37,91 @@ def standard_tab_layout(figures: list):
                                 ),
                             )
                         ],
-                        align="center",
-                        width=Dimensions.column_width_secondary.value,
+                        align=PAGE_LAYOUT.infocard_align.value,
+                        width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
                     dbc.Col(
                         dbc.Row(
                             children=graph_components,
                         ),
-                        width=Dimensions.column_width_primary.value,
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+        ]
+    )
+
+
+def grid_tab_layout(figures: list):
+    graph_components = [dcc.Graph(figure=fig) for fig in figures]
+
+    def get_graph_component(index):
+        return (
+            graph_components[index] if index < len(graph_components) else html.Div()
+        )  # in case there are less than 4 figures
+
+    return dbc.Container(
+        children=[
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        standard_dropdown(),
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(dbc.Container()),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            dbc.Card(
+                                dbc.CardBody(
+                                    [
+                                        html.P("Infocard here", className="card-text"),
+                                    ]
+                                ),
+                            )
+                        ],
+                        align=PAGE_LAYOUT.infocard_align.value,
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        get_graph_component(0),
+                        width=PAGE_LAYOUT.column_width_grid.value,
+                    ),
+                    dbc.Col(
+                        get_graph_component(1),
+                        width=PAGE_LAYOUT.column_width_grid.value,
+                    ),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            dbc.Card(
+                                dbc.CardBody(
+                                    [
+                                        html.P("Infocard here", className="card-text"),
+                                    ]
+                                ),
+                            )
+                        ],
+                        align=PAGE_LAYOUT.infocard_align.value,
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        dbc.Row(
+                            children=get_graph_component(2),
+                        ),
+                        width=PAGE_LAYOUT.column_width_grid.value,
+                    ),
+                    dbc.Col(
+                        dbc.Row(
+                            children=get_graph_component(3),
+                        ),
+                        width=PAGE_LAYOUT.column_width_grid.value,
                     ),
                 ]
             ),

@@ -9,10 +9,14 @@ from utils.config_file import (
     ElementsIDs,
 )
 
-from components.tabs import standard_tab_layout
+from components.tabs import grid_tab_layout
+from components.data import load_data
+from components.charts import box_number_participants, pie_age, violin_sex
 
 dash.register_page(__name__, path=URLS.WHO.value, order=4)
 
+df = load_data()
+
 
 def layout():
-    return standard_tab_layout([])
+    return grid_tab_layout([box_number_participants(df), pie_age(df), violin_sex(df)])

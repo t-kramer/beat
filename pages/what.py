@@ -11,7 +11,7 @@ from components.charts import bar_year, map_country, pie_building_type
 from components.data_table import data_table
 from components.input import parameter_checklist
 
-from utils.config_file import Dimensions, URLS, ElementsIDs, LABELS
+from utils.config_file import PAGE_LAYOUT, URLS, ElementsIDs, LABELS
 
 dash.register_page(__name__, path=URLS.WHAT.value, order=1)
 
@@ -36,7 +36,7 @@ def layout():
                                 ],
                             ),
                         ],
-                        width=Dimensions.column_width_secondary.value,
+                        width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
                     dbc.Col(
                         dbc.Tabs(
@@ -64,7 +64,7 @@ def layout():
                                 ),
                             ]
                         ),
-                        width=Dimensions.column_width_primary.value,
+                        width=PAGE_LAYOUT.column_width_primary.value,
                     ),
                 ]
             ),
@@ -82,10 +82,10 @@ def layout():
                                 ]
                             ),
                         ),
-                        width=Dimensions.column_width_secondary.value,
+                        width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
                     dbc.Col(
-                        data_table(df), width=Dimensions.column_width_primary.value
+                        data_table(df), width=PAGE_LAYOUT.column_width_primary.value
                     ),
                 ]
             ),

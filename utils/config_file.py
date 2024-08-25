@@ -3,10 +3,12 @@ from enum import Enum
 from pydantic import BaseModel
 
 
-class Dimensions(Enum):
+class PAGE_LAYOUT(Enum):
     default_container_width = "md"
     column_width_primary = 9
     column_width_secondary = 3
+    column_width_grid = 4
+    infocard_align = "center"
 
 
 class ElementsIDs(Enum):

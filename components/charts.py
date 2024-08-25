@@ -238,3 +238,57 @@ def sunburst_sensors(df):
     )
 
     return fig
+
+
+def box_number_participants(df):
+
+    df["exp-id"] = df["exp-id"].astype(str)
+    unique_studies = df.drop_duplicates(subset=["exp-id"])
+
+    fig = px.box(
+        unique_studies,
+        y="part-no-tot",
+        width=0.75 * CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    return fig
+
+
+def pie_age(df):
+
+    df["exp-id"] = df["exp-id"].astype(str)
+    unique_studies = df.drop_duplicates(subset=["exp-id"])
+
+    fig = px.pie(
+        unique_studies,
+        names="age-group",
+        width=0.75 * CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    fig.update_layout(
+        showlegend=False,
+    )
+
+    return fig
+
+
+def violin_sex(df):
+
+    df["exp-id"] = df["exp-id"].astype(str)
+    unique_studies = df.drop_duplicates(subset=["exp-id"])
+
+    fig = px.violin(
+        unique_studies,
+        y="fem-total-ratio",
+        # box=True,
+        # points="all",
+        width=0.75 * CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    return fig
