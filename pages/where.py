@@ -4,6 +4,8 @@ import dash_bootstrap_components as dbc
 from dash import dcc
 from dash import Dash, dcc, html, Input, Output, callback
 
+from utils.webpage_text import TextPageHeading
+
 from utils.config_file import (
     URLS,
     ElementsIDs,
@@ -19,4 +21,7 @@ df = load_data()
 
 
 def layout():
-    return standard_tab_layout([body_site_map(df), bar_parameter(df)])
+    return standard_tab_layout(
+        page_heading=TextPageHeading.where.value,
+        figures=[body_site_map(df), bar_parameter(df)],
+    )

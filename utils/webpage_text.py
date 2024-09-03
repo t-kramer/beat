@@ -12,6 +12,13 @@ class TextNavBar(Enum):
     about: str = "About"
 
 
+class TextPageHeading(Enum):
+    what: str = "Measured parameters."
+    where: str = "Measurement locations."
+    how: str = "Methods and sensors."
+    who: str = "Protocol and participant information."
+
+
 class TextHome(Enum):
     model_selection = "Select model:"
     functionality_selection = "Select functionality:"

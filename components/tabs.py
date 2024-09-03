@@ -10,7 +10,7 @@ from utils.config_file import (
 )
 
 
-def standard_tab_layout(figures: list):
+def standard_tab_layout(page_heading, figures: list):
 
     graph_components = [dcc.Graph(figure=fig) for fig in figures]
 
@@ -22,7 +22,7 @@ def standard_tab_layout(figures: list):
                         standard_dropdown(),
                         width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
-                    dbc.Col(dbc.Container()),
+                    dbc.Col(dbc.Container(html.H4(page_heading))),
                 ]
             ),
             dbc.Row(
@@ -52,7 +52,7 @@ def standard_tab_layout(figures: list):
     )
 
 
-def grid_tab_layout(figures: list):
+def grid_tab_layout(page_heading, figures: list):
     graph_components = [dcc.Graph(figure=fig) for fig in figures]
 
     def get_graph_component(index):
@@ -68,7 +68,7 @@ def grid_tab_layout(figures: list):
                         standard_dropdown(),
                         width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
-                    dbc.Col(dbc.Container()),
+                    dbc.Col(dbc.Container(html.H4(page_heading))),
                 ]
             ),
             dbc.Row(
