@@ -311,3 +311,57 @@ def hor_bar_environmental_parameters(df):
     )
 
     return fig
+
+
+def bar_thermal_questionnaires(df):
+
+    unique_studies = get_unique_studies(df)
+
+    exploded_df = unique_studies.assign(
+        thermal_questionnaire_split=unique_studies["feedback-quest-type"].str.split(
+            ", "
+        )
+    ).explode("thermal_questionnaire_split")
+
+    df = exploded_df["thermal_questionnaire_split"].value_counts().reset_index()
+    df.columns = ["thermal_questionnaire_split", "count"]
+    # df["environment_parameter_percentage"] = (df["count"] / len(unique_studies)) * 100
+
+    df = df.sort_values("count", ascending=False)
+
+    fig = px.bar(
+        df,
+        y="count",
+        x="thermal_questionnaire_split",
+        labels={
+            "count": "No. of Studies [-]",
+            "thermal_questionnaire_split": "Thermal Questionnaire [-]",
+        },
+        width=CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    return fig
+
+
+def box_session_length(df):
+
+    df = get_unique_studies(df)
+
+    # ! get rid of multiple values in session length
+    # ? convert to numeric
+    df["session-length"] = pd.to_numeric(df["session-length"], errors="coerce")
+
+    fig = px.box(
+        df,
+        y="session-length",
+        labels={
+            "session-length": "Session length [min]",
+        },
+        width=CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    return fig

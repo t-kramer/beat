@@ -43,6 +43,8 @@ class ElementsIDs(Enum):
     CHART_PIE_AGE = "id-chart-pie-age"
     CHART_VIOLIN_SEX = "id-chart-violin-sex"
     CHART_BAR_ENVIRONMENTAL = "id-chart-bar-environmental"
+    CHART_BAR_THERMAL_QUESTIONNAIRE = "id-chart-bar-thermal-questionnaire"
+    CHART_BOX_SESSION_LENGTH = "id-chart-box-session-length"
     CHECKLIST_INPUT = "checklist-input"
     URL = "url"
     FOOTER = "id-footer"
