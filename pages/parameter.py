@@ -5,7 +5,7 @@ import dash
 
 import dash_bootstrap_components as dbc
 from dash import dcc
-from dash import Dash, dcc, html, Input, Output, callback
+from dash import dcc, html, Input, Output, State, callback
 
 from components.charts import bar_year, map_country, pie_building_type
 from components.data_table import data_table
@@ -13,15 +13,19 @@ from components.input import parameter_checklist
 
 from utils.config_file import PAGE_LAYOUT, URLS, ElementsIDs, LABELS
 
-dash.register_page(__name__, path=URLS.WHAT.value, order=1)
+from utils.webpage_text import TextInfo
+
+dash.register_page(__name__, path=URLS.PARAMETER.value, order=1)
 
 
-df = pd.read_csv("./data/ulti-dataDict.csv")
+df = pd.read_csv("./data/test.csv")
 
 
 def layout():
     return dbc.Container(
         children=[
+            dcc.Store(id="selected-parameter-store", storage_type="session"),
+            dcc.Store(id="filtered-data-store", storage_type="session"),
             dbc.Row(
                 children=[
                     dbc.Col(
@@ -93,25 +97,63 @@ def layout():
     )
 
 
-# @callback(
-#     [Output(component_id='output_container', component_property='children'),
-#      Output(component_id=ElementsIDs.CHART_CONTAINER.value, component_property='figure')],
-#     [Input(component_id='select_parameter', component_property='value')]
-# )
-# def update_graph(parameter_slctd):
-#     print(parameter_slctd)
-#     print(type(parameter_slctd))
+@callback(
+    Output("parameter_checklist", "value"),
+    Input("selected-parameter-store", "data"),
+    State("parameter_checklist", "value"),
+)
+def load_checklist_state(saved_data, current_value):
+    if saved_data is None:
+        return current_value  # Return current value if no stored data
+    return saved_data
 
-#     container = "The parameter chosen by user was: {}".format(parameter_slctd)
 
-#     dff = df.copy()
+@callback(
+    [
+        Output(ElementsIDs.CHART_BAR_YEAR.value, "figure"),
+        Output(ElementsIDs.CHART_MAP_COUNTRY.value, "figure"),
+        Output(ElementsIDs.CHART_PIE_BUILDING_TYPE.value, "figure"),
+        Output("filtered-data-store", "data"),
+        Output("selected-parameter-store", "data"),
+    ],
+    [Input("parameter_checklist", "value")],
+)
+def update_graphs(selected_parameters):
+    filtered_df = df[df["physio-parameter"].isin(selected_parameters)]
 
-#     dff['exp-id'] = dff['exp-id'].astype(str)
+    print(selected_parameters)  #! Remove later
 
-#     filtered_dff = dff[dff['physio-parameter'] == parameter_slctd]
+    bar_year_fig = bar_year(filtered_df)
+    map_country_fig = map_country(filtered_df)
+    pie_building_type_fig = pie_building_type(filtered_df)
 
-#     grouped = filtered_dff.groupby('exp-id').size().reset_index(name='counts')
+    filtered_df_json = filtered_df.to_json(date_format="iso", orient="split")
 
-#     fig = px.histogram(grouped, x='exp-id', y='counts', title=f"Total Count of '{parameter_slctd}' over all 'paper'")
+    return (
+        bar_year_fig,
+        map_country_fig,
+        pie_building_type_fig,
+        filtered_df_json,
+        selected_parameters,
+    )
 
-#     return container, fig
+
+@callback(
+    Output("id-selected-parameter-text", "children"),
+    [Input("selected-parameter-store", "data")],
+)
+def update_infocard(selected_parameters):
+    if selected_parameters is None:
+        raise dash.exceptions.PreventUpdate
+
+    return dbc.Container(
+        children=[
+            html.B(TextInfo.selected_parameters.value),
+            html.Div(
+                [
+                    html.Div(param, className="parameter-item")
+                    for param in selected_parameters
+                ]
+            ),
+        ]
+    )

@@ -8,7 +8,19 @@ class PAGE_LAYOUT(Enum):
     column_width_primary = 9
     column_width_secondary = 3
     column_width_grid = 4
-    infocard_align = "center"
+    infocard_align = "top"
+
+
+class DataKeys(Enum):
+    SKIN_TEMPARATURE = "Skin Temperature"
+    HEART_RATE = "Heart Rate"
+    DOPAMINE = "Dopamine"
+    SWEAT = "Sweat"
+    BODY_TEMPERATURE = "Body Temperature"
+    BLOOD_PRESSURE = "Blood Pressure"
+    METABOLIC_RATE = "Metabolic Rate"
+    EEG = "EEG"
+    OXYGEN_SATURATION = "Oxygen Saturation"
 
 
 class ElementsIDs(Enum):
@@ -24,7 +36,13 @@ class ElementsIDs(Enum):
     CHART_CONTAINER = "chart-container"
     CHART_BAR_YEAR = "id-chart-bar-year"
     CHART_MAP_COUNTRY = "id-chart-choropleth-country"
+    CHART_MAP_BODY = "id-chart-chart-body"
     CHART_PIE_BUILDING_TYPE = "id-chart-pie-building-type"
+    CHART_SUNBURST = "id-chart-sunburst"
+    CHART_BOX_NO_PARTICIPANTS = "id-chart-box-no-participants"
+    CHART_PIE_AGE = "id-chart-pie-age"
+    CHART_VIOLIN_SEX = "id-chart-violin-sex"
+    CHART_BAR_ENVIRONMENTAL = "id-chart-bar-environmental"
     CHECKLIST_INPUT = "checklist-input"
     URL = "url"
     FOOTER = "id-footer"
@@ -44,10 +62,12 @@ class Config(Enum):
 class URLS(Enum):
     HOME: str = "/"
     ABOUT: str = "/about"
-    WHAT: str = "/what"
-    WHERE: str = "/where"
-    HOW: str = "/how"
-    WHO: str = "/who"
+    PARAMETER: str = "/parameter"
+    MEASUREMENT: str = "/measurement"
+    PARTICIPANTS: str = "/participants"
+    PROTOCOL: str = "/protocol"
+    QUESTIONNAIRE: str = "/questionnaire"
+    DATA_EXPLORER: str = "/data-explorer"
 
 
 class Stores(Enum):

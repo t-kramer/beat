@@ -6,22 +6,20 @@ from dash import Dash, dcc, html, Input, Output, callback
 
 from utils.webpage_text import TextPageHeading
 
+from components.data import load_data
+from components.tabs import standard_tab_layout
+
 from utils.config_file import (
     URLS,
     ElementsIDs,
 )
 
-from components.charts import body_site_map, bar_parameter
-from components.data import load_data
-from components.tabs import standard_tab_layout
-
-dash.register_page(__name__, path=URLS.WHERE.value, order=2)
+dash.register_page(__name__, path=URLS.QUESTIONNAIRE.value, order=5)
 
 df = load_data()
 
 
 def layout():
     return standard_tab_layout(
-        page_heading=TextPageHeading.where.value,
-        figures=[body_site_map(df), bar_parameter(df)],
+        page_heading=TextPageHeading.questionnaire.value, figures=[]
     )

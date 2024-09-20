@@ -5,10 +5,15 @@ import plotly.graph_objects as go
 from utils.config_file import CHART_LAYOUT
 
 
-def bar_year(df):
-
+def get_unique_studies(df):
     df["exp-id"] = df["exp-id"].astype(str)
     unique_studies = df.drop_duplicates(subset=["exp-id"])
+    return unique_studies
+
+
+def bar_year(df):
+
+    unique_studies = get_unique_studies(df)
     year_counts = unique_studies["pub-year"].value_counts().sort_index().reset_index()
     year_counts.columns = ["pub-year", "count"]
 
@@ -21,24 +26,41 @@ def bar_year(df):
         template=CHART_LAYOUT.template.value,
     )
 
+    fig.update_layout(
+        xaxis_title="Publication Year [a]",
+        yaxis_title="Number of Studies [-]",
+        xaxis=dict(tickmode="linear"),
+    )
+
     return fig
 
 
 def map_country(df):
 
-    df["exp-id"] = df["exp-id"].astype(str)
-    unique_studies = df.drop_duplicates(subset=["exp-id"])
+    unique_studies = get_unique_studies(df)
     country_counts = unique_studies["country"].value_counts().reset_index()
     country_counts.columns = ["country", "count"]
 
-    fig = px.choropleth(
-        country_counts,
-        locations="country",
-        locationmode="country names",
-        color="count",
+    fig = go.Figure(
+        data=go.Choropleth(
+            locations=country_counts["country"],
+            locationmode="country names",
+            z=country_counts["count"],
+            text=country_counts["country"],
+            marker_line_color="darkgray",
+            marker_line_width=0.5,
+            colorbar_title="Studies per Country [-]",
+            colorscale="Viridis",
+        )
+    )
+
+    fig.update_layout(
+        geo=dict(
+            showframe=False, showcoastlines=False, projection_type="equirectangular"
+        ),
         width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
-        hover_name="country",
+        margin={"r": 0, "t": 0, "l": 0, "b": 0},
     )
 
     return fig
@@ -63,53 +85,8 @@ def pie_building_type(df):
 
 def body_site_map(df):
 
-    #! This is dummy data for testing purposes
-    testing_location_counts = pd.DataFrame(
-        {
-            "physio-body-site": [
-                "Forehead",
-                "Nose",
-                "Cheek",
-                "Neck",
-                "Chest",
-                "Back",
-                "Upper arm",
-                "Abdomen",
-                "Lumbar",
-                "Forearm",
-                "Buttock",
-                "Wrist",
-                "Finger",
-                "Thigh",
-                "Shin",
-                "Calf",
-                "Ankle",
-                "Foot",
-                "Sole",
-            ],
-            "count": [
-                10,
-                15,
-                7,
-                20,
-                5,
-                8,
-                12,
-                14,
-                9,
-                11,
-                6,
-                13,
-                4,
-                16,
-                3,
-                18,
-                2,
-                17,
-                1,
-            ],
-        }
-    )
+    body_site_counts = df["physio-body-site"].value_counts().reset_index()
+    body_site_counts.columns = ["physio-body-site", "count"]
 
     location_coordinates = pd.DataFrame(
         {
@@ -142,9 +119,7 @@ def body_site_map(df):
     location_coordinates.reset_index(inplace=True)
     location_coordinates.rename(columns={"index": "physio-body-site"}, inplace=True)
 
-    merged_df = pd.merge(
-        location_coordinates, testing_location_counts, on="physio-body-site"
-    )
+    merged_df = pd.merge(location_coordinates, body_site_counts, on="physio-body-site")
 
     fig = go.Figure()
 
@@ -226,9 +201,11 @@ def bar_parameter(df):
 
 def sunburst_sensors(df):
 
-    data = df[
-        ["physio-parameter", "physio-sensor-type", "physio-sensor-brand"]
-    ].dropna()
+    data = (
+        df[["exp-id", "physio-parameter", "physio-sensor-type", "physio-sensor-brand"]]
+        .dropna()
+        .drop_duplicates(subset=["exp-id", "physio-parameter"])
+    )
 
     fig = px.sunburst(
         data,
@@ -242,8 +219,7 @@ def sunburst_sensors(df):
 
 def box_number_participants(df):
 
-    df["exp-id"] = df["exp-id"].astype(str)
-    unique_studies = df.drop_duplicates(subset=["exp-id"])
+    unique_studies = get_unique_studies(df)
 
     fig = px.box(
         unique_studies,
@@ -253,13 +229,16 @@ def box_number_participants(df):
         template=CHART_LAYOUT.template.value,
     )
 
+    fig.update_layout(
+        yaxis_title="No. Subjects [-]",
+    )
+
     return fig
 
 
 def pie_age(df):
 
-    df["exp-id"] = df["exp-id"].astype(str)
-    unique_studies = df.drop_duplicates(subset=["exp-id"])
+    unique_studies = get_unique_studies(df)
 
     fig = px.pie(
         unique_studies,
@@ -269,24 +248,64 @@ def pie_age(df):
         template=CHART_LAYOUT.template.value,
     )
 
-    fig.update_layout(
-        showlegend=False,
-    )
-
     return fig
 
 
 def violin_sex(df):
 
-    df["exp-id"] = df["exp-id"].astype(str)
-    unique_studies = df.drop_duplicates(subset=["exp-id"])
+    unique_studies = get_unique_studies(df)
 
-    fig = px.violin(
+    unique_values = unique_studies["fem-total-ratio"].unique()
+    sorted_values = sorted(unique_values)
+
+    category_orders = {"fem-total-ratio": sorted_values}
+
+    fig = px.histogram(
         unique_studies,
-        y="fem-total-ratio",
-        # box=True,
+        x="fem-total-ratio",
         # points="all",
         width=0.75 * CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+        category_orders=category_orders,
+    )
+
+    fig.update_layout(
+        yaxis_title="No. Studies [-]",
+        xaxis_title="Female-Total Ratio [-]",
+    )
+
+    return fig
+
+
+def hor_bar_environmental_parameters(df):
+
+    unique_studies = get_unique_studies(df)
+
+    exploded_df = unique_studies.assign(
+        environment_parameter_split=unique_studies["environment-parameter"].str.split(
+            ", "
+        )
+    ).explode("environment_parameter_split")
+
+    df = exploded_df["environment_parameter_split"].value_counts().reset_index()
+    df.columns = ["environment_parameter_split", "count"]
+    df["environment_parameter_percentage"] = (
+        (df["count"] / len(unique_studies)) * 100
+    ).round(0)
+
+    df = df.sort_values("environment_parameter_percentage", ascending=True)
+
+    fig = px.bar(
+        df,
+        x="environment_parameter_percentage",
+        y="environment_parameter_split",
+        orientation="h",
+        labels={
+            "environment_parameter_percentage": "Percentage of Studies [%]",
+            "environment_parameter_split": "Environmental Parameter [-]",
+        },
+        width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
         template=CHART_LAYOUT.template.value,
     )

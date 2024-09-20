@@ -19,10 +19,10 @@ def standard_tab_layout(page_heading, figures: list):
             dbc.Row(
                 children=[
                     dbc.Col(
-                        standard_dropdown(),
+                        html.Div("Chosen Parameter here."),
                         width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
-                    dbc.Col(dbc.Container(html.H4(page_heading))),
+                    dbc.Col(dbc.Container(html.H5(page_heading))),
                 ]
             ),
             dbc.Row(
