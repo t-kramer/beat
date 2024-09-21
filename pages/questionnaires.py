@@ -5,7 +5,10 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 from dash import dcc, html, Input, Output, callback
 
-from components.charts import bar_thermal_questionnaires
+from components.charts import (
+    bar_thermal_questionnaires,
+    parallel__questionnaires_scales,
+)
 
 from utils.webpage_text import TextPageHeading, ChartTitles
 
@@ -43,6 +46,10 @@ def layout():
                         dcc.Graph(
                             id=ElementsIDs.CHART_BAR_THERMAL_QUESTIONNAIRE.value,
                         ),
+                        html.Div(ChartTitles.parallel_questionnaire_scales.value),
+                        dcc.Graph(
+                            id=ElementsIDs.CHART_PARALLEL_QUESTIONNAIRE_SCALES.value,
+                        ),
                     ],
                     width=PAGE_LAYOUT.column_width_primary.value,
                 ),
@@ -53,6 +60,7 @@ def layout():
 
 # update graphs
 @callback(
+    Output(ElementsIDs.CHART_PARALLEL_QUESTIONNAIRE_SCALES.value, "figure"),
     Output(ElementsIDs.CHART_BAR_THERMAL_QUESTIONNAIRE.value, "figure"),
     [Input("filtered-data-store", "data")],
 )
@@ -61,4 +69,4 @@ def update_charts(data):
         raise dash.exceptions.PreventUpdate
 
     df = pd.read_json(data, orient="split")
-    return bar_thermal_questionnaires(df)
+    return parallel__questionnaires_scales(df), bar_thermal_questionnaires(df)

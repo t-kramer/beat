@@ -345,6 +345,33 @@ def bar_thermal_questionnaires(df):
     return fig
 
 
+def parallel__questionnaires_scales(df):
+
+    unique_studies = get_unique_studies(df)
+
+    exploded_df = unique_studies.assign(
+        thermal_questionnaire_split=unique_studies["feedback-quest-type"].str.split(
+            ", "
+        )
+    ).explode("thermal_questionnaire_split")
+
+    df = exploded_df["thermal_questionnaire_split"].value_counts().reset_index()
+
+    fig = px.parallel_categories(
+        exploded_df,
+        dimensions=["thermal_questionnaire_split", "feedback-scales"],
+        labels={
+            "feedback-scales": "Question Scaling [-]",
+            "thermal_questionnaire_split": "Thermal Questionnaire [-]",
+        },
+        width=CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    return fig
+
+
 def box_session_length(df):
 
     df = get_unique_studies(df)
@@ -362,6 +389,125 @@ def box_session_length(df):
         width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
         template=CHART_LAYOUT.template.value,
+    )
+
+    return fig
+
+
+def box_normalisation_length(df):
+
+    df = get_unique_studies(df)
+
+    fig = px.box(
+        df,
+        y="normalisation-length",
+        labels={
+            "normalisation-length": "Normalisation length [min]",
+        },
+        width=CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    return fig
+
+
+def scatter_test_temp(df):
+
+    df = get_unique_studies(df)
+
+    fig = px.scatter(
+        df,
+        x="tested-t-min",
+        y="tested-t-max",
+        color="physio-parameter",
+        size="part-no-tot",  # ? replace with something else
+        labels={
+            "tested-t-min": "Min. Tested Temperature [°C]",
+            "tested-t-max": "Max. Tested Temperature [°C]",
+            "physio-parameter": "Physiological Parameter [-]",
+        },
+        width=CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    return fig
+
+
+def heatmap_protocol(df):
+
+    df = get_unique_studies(df)
+
+    df = df.fillna(0)
+    df.set_index("exp-id", inplace=True)
+
+    protocol_columns = df.filter(like="protocol-")
+    protocol_columns = protocol_columns.transpose()
+
+    fig = px.imshow(
+        protocol_columns,
+        labels=dict(x="Study ID", y="Criteria", color="Fulfilled"),
+        x=protocol_columns.columns,
+        y=protocol_columns.index,
+        aspect=0.5,
+        color_continuous_scale=["White", "SlateBlue"],  # Colors for 0 and 1
+        width=CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    fig.update_coloraxes(
+        colorbar=dict(
+            tickvals=[0, 1],
+            ticktext=["False", "True"],
+        )
+    )
+
+    fig.update_layout(
+        xaxis_title="Study ID",
+        yaxis_title="Item",
+        xaxis=dict(tickmode="linear"),
+        yaxis=dict(tickmode="linear"),
+    )
+
+    return fig
+
+
+def heatmap_selection(df):
+
+    df = get_unique_studies(df)
+
+    df = df.fillna(0)
+    df.set_index("exp-id", inplace=True)
+
+    protocol_columns = df.filter(like="select-")
+    protocol_columns = protocol_columns.transpose()
+
+    fig = px.imshow(
+        protocol_columns,
+        labels=dict(x="Study ID", y="Criteria", color="Fulfilled"),
+        x=protocol_columns.columns,
+        y=protocol_columns.index,
+        aspect=0.5,
+        color_continuous_scale=["White", "MediumVioletRed"],  # Colors for 0 and 1
+        width=CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    fig.update_coloraxes(
+        colorbar=dict(
+            tickvals=[0, 1],
+            ticktext=["False", "True"],
+        )
+    )
+
+    fig.update_layout(
+        xaxis_title="Study ID [-]",
+        yaxis_title="Selection Criteria [-]",
+        xaxis=dict(tickmode="linear"),
+        yaxis=dict(tickmode="linear"),
     )
 
     return fig
