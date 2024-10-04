@@ -58,7 +58,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is the official repository for BEAT, a tool supporting the design and execution of thermo-physiological experiments in the built environment. We found that the lack of standardization across thermo-physiological experiments in buidlings represents a barrier for advancing knowledge in the field. We hope that by gathering and interactively visualizing metadata on these experiments, we can support the development of more consistent and fruitful research in the field.
+This is the official repository for BEAT, a tool supporting the design and execution of thermo-physiological experiments in the built environment we are currently developing. We found that the lack of standardization across thermo-physiological experiments in buidlings represents a barrier for advancing knowledge in the field. We hope that by gathering and interactively visualizing metadata on these experiments, we can support the development of more consistent and fruitful research in the field.
 
 [//]: # ([![Product Name Screen Shot][product-screenshot]]&#40;https://example.com&#41;)
 
@@ -124,7 +124,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 5. Push to the Branch (`git push origin feature/AmazingFeature`)
 6. Open a Pull Request
 
-### Test the application
+<!-- ### Test the application
 
 All Playwright tests can be found in the `tests` folder.
 
@@ -178,7 +178,7 @@ lsof -i :9090
 kill -9 <PID>
 ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
