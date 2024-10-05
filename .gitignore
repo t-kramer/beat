@@ -3,7 +3,8 @@
 *.pyo
 __pycache__/
 
-# Jupyter Notebook checkpoints
+# Jupyter Notebooks and checkpoints
+test-graphs.ipynb
 .ipynb_checkpoints/
 
 # data files

@@ -14,6 +14,8 @@ from components.charts import (
     hor_bar_environmental_parameters,
 )
 
+from components.infocard import infocard
+
 dash.register_page(__name__, path=URLS.MEASUREMENT.value, order=3)
 
 
@@ -29,13 +31,7 @@ def layout():
                             id="id-selected-parameter-text",
                             className="mb-3",
                         ),
-                        dbc.Card(
-                            dbc.CardBody(
-                                [
-                                    html.P("Infocard here", className="card-text"),
-                                ]
-                            ),
-                        ),
+                        infocard(),
                     ],
                     width=PAGE_LAYOUT.column_width_secondary.value,
                 ),
@@ -77,4 +73,9 @@ def update_charts(data):
     return body_site_map(df), sunburst_sensors(df), hor_bar_environmental_parameters(df)
 
 
-# update selection text-box
+@callback(Output("exp-id-count", "children"), Input("filtered-data-store", "data"))
+def update_infocard(data):
+    df = pd.read_json(data, orient="split")
+    unique_exp_ids = df["exp-id"].nunique()
+    print(f"unique_exp_ids: {unique_exp_ids}")
+    return f"{unique_exp_ids}"

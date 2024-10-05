@@ -16,6 +16,8 @@ from utils.config_file import (
 
 from components.charts import box_number_participants, pie_age, violin_sex
 
+from components.infocard import infocard
+
 dash.register_page(__name__, path=URLS.PARTICIPANTS.value, order=3)
 
 
@@ -31,13 +33,7 @@ def layout():
                             id="id-selected-parameter-text",
                             className="mb-3",
                         ),
-                        dbc.Card(
-                            dbc.CardBody(
-                                [
-                                    html.P("Infocard here", className="card-text"),
-                                ]
-                            ),
-                        ),
+                        infocard(),
                     ],
                     width=PAGE_LAYOUT.column_width_secondary.value,
                 ),
