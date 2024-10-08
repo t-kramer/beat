@@ -1,5 +1,6 @@
 import os
 
+import dash
 import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, Input, Output, callback
 
@@ -15,6 +16,7 @@ app = Dash(
         dbc.themes.BOOTSTRAP,
         "https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap",
     ],
+    serve_locally=True,
 )
 
 app.layout = dbc.Container(
@@ -32,4 +34,8 @@ app.layout = dbc.Container(
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
-    app.run(debug=False, host="0.0.0.0", port=port)
+    app.run_server(
+        debug=True,
+        host="0.0.0.0",
+        port=port,
+    )

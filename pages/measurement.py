@@ -73,9 +73,14 @@ def update_charts(data):
     return body_site_map(df), sunburst_sensors(df), hor_bar_environmental_parameters(df)
 
 
-@callback(Output("exp-id-count", "children"), Input("filtered-data-store", "data"))
+@callback(
+    Output("exp-id-count", "children"),
+    Output("data-count", "children"),
+    [Input("filtered-data-store", "data")],
+)
 def update_infocard(data):
     df = pd.read_json(data, orient="split")
     unique_exp_ids = df["exp-id"].nunique()
-    print(f"unique_exp_ids: {unique_exp_ids}")
-    return f"{unique_exp_ids}"
+    total_data_points = len(df)
+
+    return unique_exp_ids, total_data_points

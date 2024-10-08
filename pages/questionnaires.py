@@ -14,6 +14,8 @@ from utils.webpage_text import TextPageHeading, ChartTitles
 
 from utils.config_file import URLS, ElementsIDs, PAGE_LAYOUT
 
+from components.infocard import infocard
+
 dash.register_page(__name__, path=URLS.QUESTIONNAIRE.value, order=5)
 
 
@@ -29,13 +31,7 @@ def layout():
                             id="id-selected-parameter-text",
                             className="mb-3",
                         ),
-                        dbc.Card(
-                            dbc.CardBody(
-                                [
-                                    html.P("Infocard here", className="card-text"),
-                                ]
-                            ),
-                        ),
+                        infocard(),
                     ],
                     width=PAGE_LAYOUT.column_width_secondary.value,
                 ),

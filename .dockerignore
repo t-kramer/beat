@@ -1,0 +1,15 @@
+README.md
+LICENSE
+
+# Python cache and virtual environments
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# local development files
+.DS_Store
+
+# Jupyter Notebooks and checkpoints
+test-graphs.ipynb
+.ipynb_checkpoints/

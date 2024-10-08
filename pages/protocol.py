@@ -21,6 +21,8 @@ from components.charts import (
     heatmap_selection,
 )
 
+from components.infocard import infocard
+
 dash.register_page(__name__, path=URLS.PROTOCOL.value, order=4)
 
 
@@ -36,13 +38,7 @@ def layout():
                             id="id-selected-parameter-text",
                             className="mb-3",
                         ),
-                        dbc.Card(
-                            dbc.CardBody(
-                                [
-                                    html.P("Infocard here", className="card-text"),
-                                ]
-                            ),
-                        ),
+                        infocard(),
                     ],
                     width=PAGE_LAYOUT.column_width_secondary.value,
                 ),
