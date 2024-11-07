@@ -16,7 +16,7 @@ from components.charts import (
 
 from components.infocard import infocard
 
-dash.register_page(__name__, path=URLS.MEASUREMENT.value, order=3)
+dash.register_page(__name__, path=URLS.PHYSIOLOGY.value, order=2)
 
 
 def layout():

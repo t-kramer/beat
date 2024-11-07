@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class PAGE_LAYOUT(Enum):
     default_container_width = "md"
+    column_width_full = 12
     column_width_primary = 9
     column_width_secondary = 3
     column_width_grid = 4
@@ -12,15 +13,15 @@ class PAGE_LAYOUT(Enum):
 
 
 class DataKeys(Enum):
-    SKIN_TEMPARATURE = "Skin Temperature"
-    HEART_RATE = "Heart Rate"
+    SKIN_TEMPARATURE = "Skin temperature"
+    HEART_RATE = "Heart rate"
     DOPAMINE = "Dopamine"
     SWEAT = "Sweat"
-    BODY_TEMPERATURE = "Body Temperature"
-    BLOOD_PRESSURE = "Blood Pressure"
-    METABOLIC_RATE = "Metabolic Rate"
+    BODY_TEMPERATURE = "Body temperature"
+    BLOOD_PRESSURE = "Blood pressure"
+    METABOLIC_RATE = "Metabolic rate"
     EEG = "EEG"
-    OXYGEN_SATURATION = "Oxygen Saturation"
+    OXYGEN_SATURATION = "Oxygen saturation"
 
 
 class ElementsIDs(Enum):
@@ -62,19 +63,17 @@ class LABELS(Enum):
 
 
 class Config(Enum):
-    # DEBUG: bool = False
     DEBUG: bool = "macOS" in platform.platform()
 
 
 class URLS(Enum):
     HOME: str = "/"
-    ABOUT: str = "/about"
-    PARAMETER: str = "/parameter"
-    MEASUREMENT: str = "/measurement"
+    EXPERIMENT: str = "/experiment"
+    PHYSIOLOGY: str = "/physiology"
+    ENVIRONMENT: str = "/environment"
     PARTICIPANTS: str = "/participants"
     PROTOCOL: str = "/protocol"
     QUESTIONNAIRE: str = "/questionnaire"
-    DATA_EXPLORER: str = "/data-explorer"
 
 
 class Stores(Enum):

@@ -16,7 +16,7 @@ from utils.config_file import URLS, ElementsIDs, PAGE_LAYOUT
 
 from components.infocard import infocard
 
-dash.register_page(__name__, path=URLS.QUESTIONNAIRE.value, order=5)
+dash.register_page(__name__, path=URLS.QUESTIONNAIRE.value, order=6)
 
 
 def layout():

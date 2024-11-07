@@ -13,7 +13,7 @@ app = Dash(
     __name__,
     use_pages=True,
     external_stylesheets=[
-        dbc.themes.BOOTSTRAP,
+        dbc.themes.LUX,
         "https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap",
     ],
     serve_locally=True,
@@ -35,7 +35,7 @@ app.layout = dbc.Container(
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run_server(
-        debug=False,
+        debug=True,
         host="0.0.0.0",
         port=port,
     )

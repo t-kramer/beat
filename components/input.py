@@ -1,4 +1,5 @@
 import dash_bootstrap_components as dbc
+from dash import dcc
 
 from utils.config_file import DataKeys
 
@@ -17,7 +18,7 @@ def standard_dropdown():
 
 def parameter_checklist():
     return dbc.Checklist(
-        id="parameter_checklist",
+        id="parameter-checklist",
         options=[
             {"label": "Skin Temperature", "value": DataKeys.SKIN_TEMPARATURE.value},
             {"label": "Heart Rate", "value": DataKeys.HEART_RATE.value},
@@ -41,4 +42,50 @@ def parameter_checklist():
             DataKeys.OXYGEN_SATURATION.value,
         ],
         switch=True,
+    )
+
+
+def study_type_checklist():
+    return dbc.Checklist(
+        id="study-type-checklist",
+    )
+
+
+def country_dropdown():
+    return dcc.Dropdown(
+        id="country-dropdown",
+        placeholder="Select Country",
+        multi=True,
+    )
+
+
+def building_typology_checklist():
+    return dbc.Checklist(
+        id="building-typology-checklist",
+        inline=True,
+    )
+
+
+# def year_slider():
+#     return dcc.RangeSlider(
+#         id="year-slider",
+#         step=1,
+#         marks={},
+#     )
+
+
+def year_slider(min_year, max_year):
+    # Set initial value to cover the full range of years
+    initial_value = [min_year, max_year]
+
+    # Generate marks for every year in the range
+    marks = {str(year): str(year) for year in range(min_year, max_year + 1)}
+
+    return dcc.RangeSlider(
+        id="year-slider",
+        min=min_year,
+        max=max_year,
+        step=1,
+        marks=marks,
+        value=initial_value,  # Start with the full range selected
     )

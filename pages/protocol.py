@@ -23,7 +23,7 @@ from components.charts import (
 
 from components.infocard import infocard
 
-dash.register_page(__name__, path=URLS.PROTOCOL.value, order=4)
+dash.register_page(__name__, path=URLS.PROTOCOL.value, order=5)
 
 
 def layout():

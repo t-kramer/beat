@@ -18,7 +18,7 @@ from components.charts import box_number_participants, pie_age, violin_sex
 
 from components.infocard import infocard
 
-dash.register_page(__name__, path=URLS.PARTICIPANTS.value, order=3)
+dash.register_page(__name__, path=URLS.PARTICIPANTS.value, order=4)
 
 
 def layout():

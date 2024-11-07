@@ -3,8 +3,14 @@ import pandas as pd
 
 
 def data_table(df):
+
+    data = df.drop_duplicates(subset=["exp-id"])[
+        ["pub-year", "paper", "authors", "institutes", "country", "pub-name", "doi"]
+    ]
+
+    print(data.columns)
     return dash_table.DataTable(
-        df.to_dict("records"),
+        data.to_dict("records"),
         columns=[
             {
                 "name": i,
@@ -13,7 +19,7 @@ def data_table(df):
                 "editable": False,
                 "selectable": True,
             }
-            for i in df.columns
+            for i in data.columns
         ],
         fixed_rows={"headers": True},
         page_size=20,
@@ -26,9 +32,10 @@ def data_table(df):
         },
         style_cell={
             "minWidth": "100px",  # Minimum column width
-            "maxWidth": "150px",  # Maximum column width
+            "maxWidth": "250px",  # Maximum column width
             "overflow": "hidden",
             "textOverflow": "ellipsis",
+            "textAlign": "left",
         },
         style_header={
             "fontSize": "16px",  # Same font size as data cells
@@ -40,9 +47,10 @@ def data_table(df):
                 column: {"value": str(value), "type": "markdown"}
                 for column, value in row.items()
             }
-            for row in df.to_dict("records")
+            for row in data.to_dict("records")
         ],
         tooltip_duration=None,
         sort_action="native",
         filter_action="native",
+        id="data-table",
     )
