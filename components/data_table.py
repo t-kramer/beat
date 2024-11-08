@@ -8,7 +8,6 @@ def data_table(df):
         ["pub-year", "paper", "authors", "institutes", "country", "pub-name", "doi"]
     ]
 
-    print(data.columns)
     return dash_table.DataTable(
         data.to_dict("records"),
         columns=[
@@ -22,7 +21,6 @@ def data_table(df):
             for i in data.columns
         ],
         fixed_rows={"headers": True},
-        page_size=20,
         style_table={"overflowY": "auto", "height": "400px"},
         style_data={
             "whiteSpace": "nowrap",  # Prevent line breaks

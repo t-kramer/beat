@@ -25,7 +25,9 @@ app.layout = dbc.Container(
     children=[
         cbe_header(),
         html.Div(
-            children=tabs(),
+            children=[
+                tabs(),
+            ],
             style={"padding": "10px"},
         ),
         cbe_footer(),

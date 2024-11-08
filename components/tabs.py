@@ -132,6 +132,7 @@ def grid_tab_layout(page_heading, figures: list):
 def tabs():
     return dbc.Container(
         children=[
+            html.Div(id="initial-load", style={"display": "none"}),
             dbc.Row(
                 dbc.Nav(
                     [

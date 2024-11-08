@@ -1,5 +1,6 @@
 import dash
 import pandas as pd
+from io import StringIO
 
 import dash_bootstrap_components as dbc
 from dash import dcc, html, Input, Output, callback
@@ -37,16 +38,16 @@ def layout():
                 ),
                 dbc.Col(
                     children=[
-                        html.H4(TextPageHeading.measurement.value),
-                        html.Div(ChartTitles.body_site_map.value),
+                        html.H4(TextPageHeading.physiology.value),
+                        dbc.Label(ChartTitles.body_site_map.value),
                         dcc.Graph(
                             id=ElementsIDs.CHART_MAP_BODY.value,
                         ),
-                        html.Div(ChartTitles.sunburst_sensors.value),
+                        dbc.Label(ChartTitles.sunburst_sensors.value),
                         dcc.Graph(
                             id=ElementsIDs.CHART_SUNBURST.value,
                         ),
-                        html.Div(ChartTitles.bar_environmental.value),
+                        dbc.Label(ChartTitles.bar_environmental.value),
                         dcc.Graph(
                             id=ElementsIDs.CHART_BAR_ENVIRONMENTAL.value,
                         ),
@@ -69,8 +70,14 @@ def update_charts(data):
     if data is None:
         raise dash.exceptions.PreventUpdate
 
-    df = pd.read_json(data, orient="split")
-    return body_site_map(df), sunburst_sensors(df), hor_bar_environmental_parameters(df)
+    json_data = StringIO(data)
+    filtered_df = pd.read_json(json_data, orient="split")
+
+    return (
+        body_site_map(filtered_df),
+        sunburst_sensors(filtered_df),
+        hor_bar_environmental_parameters(filtered_df),
+    )
 
 
 @callback(
@@ -79,7 +86,10 @@ def update_charts(data):
     [Input("filtered-data-store", "data")],
 )
 def update_infocard(data):
-    df = pd.read_json(data, orient="split")
+
+    json_data = StringIO(data)
+    df = pd.read_json(json_data, orient="split")
+
     unique_exp_ids = df["exp-id"].nunique()
     total_data_points = len(df)
 

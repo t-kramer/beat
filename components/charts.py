@@ -144,7 +144,7 @@ def body_site_map(df):
             x=merged_df["x-coordinate"],
             y=merged_df["y-coordinate"],
             mode="markers",
-            marker=dict(size=merged_df["count"] * 2.5, color="#db1492", opacity=0.8),
+            marker=dict(size=merged_df["count"] * 1, color="#db1492", opacity=0.8),
             text=merged_df["count"],  # Add the counts to the hover text
             hoverinfo="text",
         )
@@ -282,28 +282,24 @@ def hor_bar_environmental_parameters(df):
 
     unique_studies = get_unique_studies(df)
 
-    exploded_df = unique_studies.assign(
-        environment_parameter_split=unique_studies["environment-parameter"].str.split(
-            ", "
-        )
-    ).explode("environment_parameter_split")
+    env_columns = [col for col in unique_studies.columns if col.startswith("env-")]
+    env_df = unique_studies[env_columns]
 
-    df = exploded_df["environment_parameter_split"].value_counts().reset_index()
-    df.columns = ["environment_parameter_split", "count"]
-    df["environment_parameter_percentage"] = (
-        (df["count"] / len(unique_studies)) * 100
-    ).round(0)
+    env_coverage = env_df.notna().mean() * 100
+    env_coverage_df = env_coverage.reset_index()
+    env_coverage_df.columns = ["environment_parameter", "coverage_percentage"]
 
-    df = df.sort_values("environment_parameter_percentage", ascending=True)
+    env_coverage_df = env_coverage_df.sort_values(
+        "coverage_percentage", ascending=False
+    )
 
     fig = px.bar(
-        df,
-        x="environment_parameter_percentage",
-        y="environment_parameter_split",
-        orientation="h",
+        env_coverage_df,
+        y="coverage_percentage",
+        x="environment_parameter",
         labels={
-            "environment_parameter_percentage": "Percentage of Studies [%]",
-            "environment_parameter_split": "Environmental Parameter [-]",
+            "coverage_percentage": "Coverage Percentage [%]",
+            "environment_parameter": "Environmental Parameter",
         },
         width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,

@@ -19,7 +19,7 @@ from components.input import (
 
 from utils.config_file import PAGE_LAYOUT, URLS, ElementsIDs, LABELS
 
-from utils.webpage_text import TextInfo
+from utils.webpage_text import TextInfo, FilterText
 
 dash.register_page(__name__, path=URLS.EXPERIMENT.value, order=1)
 
@@ -30,31 +30,33 @@ df = pd.read_csv("./data/test.csv")
 def layout():
     return dbc.Container(
         children=[
-            dcc.Store(id="selected-parameter-store", storage_type="session"),
+            dcc.Store(id="filter-selection-store", storage_type="session"),
             dcc.Store(id="filtered-data-store", storage_type="session"),
             dbc.Row(
                 [
                     dbc.Col(
                         [
-                            dbc.Label("Study Type."),
+                            dbc.Label(FilterText.study_type.value),
                             study_type_checklist(),
-                            dbc.Label("Country."),
+                            html.Hr(),
+                            dbc.Label(FilterText.country.value),
                             country_dropdown(),
                         ],
                         width=4,
                     ),
                     dbc.Col(
                         [
-                            dbc.Label("Building Typology."),
+                            dbc.Label(FilterText.building_typology.value),
                             building_typology_checklist(),
-                            dbc.Label("Year"),
+                            html.Hr(),
+                            dbc.Label(FilterText.year.value),
                             year_slider(df["pub-year"].min(), df["pub-year"].max()),
                         ],
                         width=5,
                     ),
                     dbc.Col(
                         [
-                            dbc.Label("Physiological Parameters."),
+                            dbc.Label(FilterText.physiological_parameters.value),
                             parameter_checklist(),
                         ],
                         width=PAGE_LAYOUT.column_width_secondary.value,
@@ -107,61 +109,76 @@ def layout():
                                     ),
                                 ]
                             ),
-                            dbc.Label("List of filtered studies."),
-                            data_table(df),
                         ],
                         width=PAGE_LAYOUT.column_width_primary.value,
                     ),
                 ]
             ),
+            dbc.Row(
+                dbc.Col(
+                    [
+                        dbc.Label(FilterText.data_table.value),
+                        data_table(df),
+                    ],
+                )
+            ),
         ]
     )
 
 
-# update dropdown options dynamically
+# 1.) Set options and values based on initial data
 @callback(
     [
         Output("study-type-checklist", "options"),
+        Output("study-type-checklist", "value"),
         Output("building-typology-checklist", "options"),
+        Output("building-typology-checklist", "value"),
         Output("country-dropdown", "options"),
+        Output("country-dropdown", "value"),
+        Output("year-slider", "value"),
         Output("year-slider", "min"),
         Output("year-slider", "max"),
         Output("year-slider", "marks"),
-        # Output("parameter_checklist", "value"),
     ],
-    Input("filtered-data-store", "data"),
+    [Input("initial-load", "children")],
 )
-def update_filter_options(_):
-    # Extract dropwdown options
-    study_type_options = [
-        {"label": i, "value": i}
-        for i in sorted(df["exp-type"].dropna().unique(), reverse=True)
-    ]
-    typology_options = [
-        {"label": i, "value": i} for i in sorted(df["function"].dropna().unique())
-    ]
-    country_options = [
-        {"label": i, "value": i} for i in sorted(df["country"].dropna().unique())
-    ]
+def set_filter_options(_):
 
+    def generate_options_and_values(column):
+        unique_values = sorted(df[column].dropna().unique(), reverse=True)
+        options = [{"label": i, "value": i} for i in unique_values]
+        return options, unique_values
+
+    # options and values for each checklist and dropdown
+    study_type_options, study_values = generate_options_and_values("exp-type")
+    typology_options, typology_values = generate_options_and_values("function")
+    country_options, country_values = generate_options_and_values("country")
+
+    # slider settings
     year_min = df["pub-year"].min()
     year_max = df["pub-year"].max()
-    year_marks = {i: str(i) for i in range(year_min, year_max + 1, 1)}
+    year_marks = {year: str(year) for year in range(year_min, year_max + 1)}
+    years_options = [year_min, year_max]
+
+    print("initial options and values set!")  #! Remove later
 
     return (
         study_type_options,
+        study_values,
         typology_options,
+        typology_values,
         country_options,
+        country_values,
+        years_options,
         year_min,
         year_max,
         year_marks,
     )
 
 
+# 2.) Store filters when updated
 @callback(
-    [
-        Output("filtered-data-store", "data"),
-    ],
+    Output("filter-selection-store", "data"),
     [
         Input("parameter-checklist", "value"),
         Input("study-type-checklist", "value"),
@@ -170,12 +187,40 @@ def update_filter_options(_):
         Input("year-slider", "value"),
     ],
 )
-def filter_data(parameters, study_type, typology, country, years):
+def store_selected_filters(parameters, study_type, typology, country, years):
 
-    min_year, max_year = years
+    selected_filters = {
+        "parameters_value": parameters,
+        "study_type_value": study_type,
+        "building_typology_value": typology,
+        "country_value": country,
+        "years_value": years,
+    }
+
+    print("filters saved!")  #! Remove later
+
+    return selected_filters  # ? filter-selection-store
+
+
+# 3.) Filter data based on selected filters and store it
+@callback(
+    [
+        Output("filtered-data-store", "data"),
+    ],
+    [
+        Input("filter-selection-store", "data"),
+    ],
+)
+def filter_data(loaded_filters):
+
+    min_year, max_year = loaded_filters["years_value"]
     all_years = list(range(min_year, max_year + 1))
 
-    print(parameters, study_type, typology, country, all_years)  #! Remove later
+    parameters = loaded_filters["parameters_value"]
+    study_type = loaded_filters["study_type_value"]
+    typology = loaded_filters["building_typology_value"]
+    country = loaded_filters["country_value"]
+
     filtered_df = df[
         (df["physio-parameter"].isin(parameters))
         & (df["exp-type"].isin(study_type or df["exp-type"].unique()))
@@ -184,11 +229,14 @@ def filter_data(parameters, study_type, typology, country, years):
         & (df["pub-year"].isin(all_years))
     ]
 
+    print("filtered data saved!")
+
     filtered_df_json = filtered_df.to_json(date_format="iso", orient="split")
 
-    return (filtered_df_json,)
+    return (filtered_df_json,)  # ? filtered-data-store
 
 
+# 4.) Update graphs and data table based on filtered data
 @callback(
     [
         Output(ElementsIDs.CHART_BAR_YEAR.value, "figure"),
@@ -199,9 +247,14 @@ def filter_data(parameters, study_type, typology, country, years):
     [Input("filtered-data-store", "data")],
 )
 def update_graphs_datatable(data):
-
-    json_data = StringIO(data)
-    filtered_df = pd.read_json(json_data, orient="split")
+    if data is None:
+        return dash.no_update  # Skip update if no data is stored
+    try:
+        json_data = StringIO(data)
+        filtered_df = pd.read_json(json_data, orient="split")
+    except Exception as e:
+        print(f"Error loading data from store: {e}")
+        return dash.no_update
 
     bar_year_fig = bar_year(filtered_df)
     map_country_fig = map_country(filtered_df)
@@ -224,10 +277,10 @@ def update_graphs_datatable(data):
 #     Input("selected-parameter-store", "data"),
 #     State("parameter_checklist", "value"),
 # )
-# def load_checklist_state(saved_data, current_value):
-#     if saved_data is None:
+# def load_checklist_state(loaded_data, current_value):
+#     if loaded_data is None:
 #         return current_value  # Return current value if no stored data
-#     return saved_data
+#     return loaded_data
 
 
 # @callback(
