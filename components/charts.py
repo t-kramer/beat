@@ -224,7 +224,7 @@ def box_number_participants(df):
     fig = px.box(
         unique_studies,
         y="part-no-tot",
-        width=0.75 * CHART_LAYOUT.width.value,
+        width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
         template=CHART_LAYOUT.template.value,
     )
@@ -243,7 +243,7 @@ def pie_age(df):
     fig = px.pie(
         unique_studies,
         names="age-group",
-        width=0.75 * CHART_LAYOUT.width.value,
+        width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
         template=CHART_LAYOUT.template.value,
     )
@@ -251,11 +251,11 @@ def pie_age(df):
     return fig
 
 
-def violin_sex(df):
+def histogram_sex(df):
 
     unique_studies = get_unique_studies(df)
 
-    unique_values = unique_studies["fem-total-ratio"].unique()
+    unique_values = unique_studies["fem-total-ratio"].dropna()
     sorted_values = sorted(unique_values)
 
     category_orders = {"fem-total-ratio": sorted_values}
@@ -264,7 +264,7 @@ def violin_sex(df):
         unique_studies,
         x="fem-total-ratio",
         # points="all",
-        width=0.75 * CHART_LAYOUT.width.value,
+        width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
         template=CHART_LAYOUT.template.value,
         category_orders=category_orders,
@@ -412,6 +412,8 @@ def scatter_test_temp(df):
 
     df = get_unique_studies(df)
 
+    df = df.dropna(subset=["part-no-tot"])
+
     fig = px.scatter(
         df,
         x="tested-t-min",
@@ -463,7 +465,7 @@ def heatmap_protocol(df):
     fig.update_layout(
         xaxis_title="Study ID",
         yaxis_title="Item",
-        xaxis=dict(tickmode="linear"),
+        xaxis=dict(tickmode="linear", showticklabels=False, ticks=""),
         yaxis=dict(tickmode="linear"),
     )
 
@@ -502,7 +504,7 @@ def heatmap_selection(df):
     fig.update_layout(
         xaxis_title="Study ID [-]",
         yaxis_title="Selection Criteria [-]",
-        xaxis=dict(tickmode="linear"),
+        xaxis=dict(tickmode="linear", showticklabels=False, ticks=""),
         yaxis=dict(tickmode="linear"),
     )
 

@@ -4,6 +4,8 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, Input, Output, callback
 
+import utils.plotly_theme
+
 
 from components.header import cbe_header
 from components.tabs import tabs

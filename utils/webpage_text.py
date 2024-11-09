@@ -15,7 +15,7 @@ class TextNavBar(Enum):
 class TextPageHeading(Enum):
     physiology: str = "Measurement locations & sensors."
     environment: str = "Environmental parameters."
-    participant: str = "Participant information."
+    participants: str = "Participant information."
     protocol: str = "Common protocols."
     questionnaire: str = "Thermal comfort questionnaires & cognitive tests."
 
@@ -44,7 +44,7 @@ class ChartTitles(Enum):
     sunburst_sensors = "Physiological Sensors."
     box_no_participants = "Number of Participants."
     chart_pie_age = "Age Distribution."
-    chart_violin_sex = "Sex Distribution."
+    chart_histogram_sex = "Sex Distribution."
     bar_environmental = "Recorded Environmental Parameters."
     bar_thermal_questionnaire = "Thermal Questionnaires ADD SCALES."
     parallel_questionnaire_scales = "Questionnaires & Scales."

@@ -1,5 +1,7 @@
 import dash
 
+from io import StringIO
+
 import dash_bootstrap_components as dbc
 from dash import dcc, html, Input, Output, callback
 
@@ -28,48 +30,123 @@ dash.register_page(__name__, path=URLS.PROTOCOL.value, order=5)
 
 def layout():
     return dbc.Container(
-        dbc.Row(
-            children=[
-                dcc.Store(id="selected-parameter-store", storage_type="session"),
-                dcc.Store(id="filtered-data-store", storage_type="session"),
-                dbc.Col(
-                    children=[
-                        html.Div(
-                            id="id-selected-parameter-text",
-                            className="mb-3",
-                        ),
-                        infocard(),
-                    ],
-                    width=PAGE_LAYOUT.column_width_secondary.value,
-                ),
-                dbc.Col(
-                    children=[
-                        html.H4(TextPageHeading.protocol.value),
-                        html.H5("Protocol design"),
-                        html.Div(ChartTitles.heatmap_protocol.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_HEATMAP_PROTOCOL.value,
-                        ),
-                        html.Div(ChartTitles.heatmap_selection.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_HEATMAP_SELECTION.value,
-                        ),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_SCATTER_TEST_TEMPS.value,
-                        ),
-                        html.Div(ChartTitles.box_session_length.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_BOX_SESSION_LENGTH.value,
-                        ),
-                        html.Div(ChartTitles.box_normalisation_length.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_BOX_NORMALISATION_LENGTH.value,
-                        ),
-                    ],
-                    width=PAGE_LAYOUT.column_width_primary.value,
-                ),
-            ]
-        )
+        [
+            dbc.Row(
+                children=[
+                    dcc.Store(id="filtered-data-store", storage_type="session"),
+                    html.H4(TextPageHeading.protocol.value),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Label(ChartTitles.heatmap_protocol.value),
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_HEATMAP_PROTOCOL.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Label(ChartTitles.heatmap_selection.value),
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_HEATMAP_SELECTION.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_SCATTER_TEST_TEMPS.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Label(ChartTitles.box_session_length.value),
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_BOX_SESSION_LENGTH.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Label(ChartTitles.box_normalisation_length.value),
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_BOX_NORMALISATION_LENGTH.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+        ]
     )
 
 
@@ -86,11 +163,13 @@ def update_charts(data):
     if data is None:
         raise dash.exceptions.PreventUpdate
 
-    df = pd.read_json(data, orient="split")
+    json_data = StringIO(data)
+    filtered_df = pd.read_json(json_data, orient="split")
+
     return (
-        heatmap_protocol(df),
-        heatmap_selection(df),
-        scatter_test_temp(df),
-        box_session_length(df),
-        box_normalisation_length(df),
+        heatmap_protocol(filtered_df),
+        heatmap_selection(filtered_df),
+        scatter_test_temp(filtered_df),
+        box_session_length(filtered_df),
+        box_normalisation_length(filtered_df),
     )

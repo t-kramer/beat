@@ -256,18 +256,14 @@ def update_graphs_datatable(data):
         print(f"Error loading data from store: {e}")
         return dash.no_update
 
-    bar_year_fig = bar_year(filtered_df)
-    map_country_fig = map_country(filtered_df)
-    pie_building_type_fig = pie_building_type(filtered_df)
-
     updated_table_data = filtered_df.drop_duplicates(subset=["exp-id"]).sort_values(
         by="pub-year", ascending=True, inplace=False
     )
 
     return (
-        bar_year_fig,
-        map_country_fig,
-        pie_building_type_fig,
+        bar_year(filtered_df),
+        map_country(filtered_df),
+        pie_building_type(filtered_df),
         updated_table_data.to_dict("records"),
     )
 

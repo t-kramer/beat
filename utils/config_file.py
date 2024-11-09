@@ -42,7 +42,7 @@ class ElementsIDs(Enum):
     CHART_SUNBURST = "id-chart-sunburst"
     CHART_BOX_NO_PARTICIPANTS = "id-chart-box-no-participants"
     CHART_PIE_AGE = "id-chart-pie-age"
-    CHART_VIOLIN_SEX = "id-chart-violin-sex"
+    CHART_HISTOGRAM_SEX = "id-chart-histogram-sex"
     CHART_BAR_ENVIRONMENTAL = "id-chart-bar-environmental"
     CHART_BAR_THERMAL_QUESTIONNAIRE = "id-chart-bar-thermal-questionnaire"
     CHART_PARALLEL_QUESTIONNAIRE_SCALES = "id-chart-parallel-questionnaire-scales"
@@ -52,8 +52,9 @@ class ElementsIDs(Enum):
     CHART_HEATMAP_PROTOCOL = "id-chart-heatmap-protocol"
     CHART_HEATMAP_SELECTION = "id-chart-heatmap-selection"
     CHECKLIST_INPUT = "checklist-input"
-    URL = "url"
     FOOTER = "id-footer"
+    LOADING_TYPE = "circle"
+    URL = "url"
 
 
 class LABELS(Enum):
@@ -83,4 +84,4 @@ class Stores(Enum):
 class CHART_LAYOUT(Enum):
     width: int = 800
     height: int = 400
-    template: str = "plotly_white"
+    template: str = "beat_theme"

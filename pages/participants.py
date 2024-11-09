@@ -1,5 +1,7 @@
 import dash
 
+from io import StringIO
+
 import dash_bootstrap_components as dbc
 from dash import dcc
 from dash import dcc, html, Input, Output, callback
@@ -14,7 +16,7 @@ from utils.config_file import (
     PAGE_LAYOUT,
 )
 
-from components.charts import box_number_participants, pie_age, violin_sex
+from components.charts import box_number_participants, pie_age, histogram_sex
 
 from components.infocard import infocard
 
@@ -23,53 +25,98 @@ dash.register_page(__name__, path=URLS.PARTICIPANTS.value, order=4)
 
 def layout():
     return dbc.Container(
-        dbc.Row(
-            children=[
-                dcc.Store(id="selected-parameter-store", storage_type="session"),
-                dcc.Store(id="filtered-data-store", storage_type="session"),
-                dbc.Col(
-                    children=[
-                        html.Div(
-                            id="id-selected-parameter-text",
-                            className="mb-3",
-                        ),
-                        infocard(),
-                    ],
-                    width=PAGE_LAYOUT.column_width_secondary.value,
-                ),
-                dbc.Col(
-                    children=[
-                        html.H4(TextPageHeading.participant.value),
-                        html.Div(ChartTitles.box_no_participants.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_BOX_NO_PARTICIPANTS.value,
-                        ),
-                        html.Div(ChartTitles.chart_pie_age.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_PIE_AGE.value,
-                        ),
-                        html.Div(ChartTitles.chart_violin_sex.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_VIOLIN_SEX.value,
-                        ),
-                    ],
-                    width=PAGE_LAYOUT.column_width_primary.value,
-                ),
-            ]
-        )
+        [
+            dbc.Row(
+                children=[
+                    dcc.Store(id="filtered-data-store", storage_type="session"),
+                    html.H4(TextPageHeading.participants.value),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Label(ChartTitles.box_no_participants.value),
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_BOX_NO_PARTICIPANTS.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Label(ChartTitles.chart_pie_age.value),
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_PIE_AGE.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Label(ChartTitles.chart_histogram_sex.value),
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_HISTOGRAM_SEX.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+        ]
     )
 
 
-# update graphs
 @callback(
     Output(ElementsIDs.CHART_BOX_NO_PARTICIPANTS.value, "figure"),
     Output(ElementsIDs.CHART_PIE_AGE.value, "figure"),
-    Output(ElementsIDs.CHART_VIOLIN_SEX.value, "figure"),
+    Output(ElementsIDs.CHART_HISTOGRAM_SEX.value, "figure"),
     [Input("filtered-data-store", "data")],
 )
 def update_charts(data):
     if data is None:
         raise dash.exceptions.PreventUpdate
 
-    df = pd.read_json(data, orient="split")
-    return box_number_participants(df), pie_age(df), violin_sex(df)
+    json_data = StringIO(data)
+    filtered_df = pd.read_json(json_data, orient="split")
+
+    return (
+        box_number_participants(filtered_df),
+        pie_age(filtered_df),
+        histogram_sex(filtered_df),
+    )
