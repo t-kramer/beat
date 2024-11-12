@@ -1,14 +1,11 @@
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 
 from utils.config_file import CHART_LAYOUT
-
-
-def get_unique_studies(df):
-    df["exp-id"] = df["exp-id"].astype(str)
-    unique_studies = df.drop_duplicates(subset=["exp-id"])
-    return unique_studies
+from utils.plotly_theme import custom_colors  # import template colors
+from utils.helper_functions import get_unique_studies
 
 
 def bar_year(df):
@@ -313,29 +310,48 @@ def bar_thermal_questionnaires(df):
 
     unique_studies = get_unique_studies(df)
 
-    exploded_df = unique_studies.assign(
-        thermal_questionnaire_split=unique_studies["feedback-quest-type"].str.split(
-            ", "
+    ques_columns = [
+        col for col in unique_studies.columns if col.startswith("ques-thermal")
+    ]
+    ques_df = unique_studies[ques_columns]
+
+    value_counts_list = []
+
+    for col in ques_columns:
+        non_nan_percentage = ques_df[col].notna().mean() * 100
+
+        value_counts = (
+            ques_df[col].dropna().value_counts(normalize=True) * non_nan_percentage
         )
-    ).explode("thermal_questionnaire_split")
+        value_counts = value_counts.reset_index()
+        value_counts.columns = ["response_value", "percentage"]
+        value_counts["questionnaire"] = col
+        value_counts["total_coverage_percentage"] = non_nan_percentage
 
-    df = exploded_df["thermal_questionnaire_split"].value_counts().reset_index()
-    df.columns = ["thermal_questionnaire_split", "count"]
-    # df["environment_parameter_percentage"] = (df["count"] / len(unique_studies)) * 100
+        value_counts_list.append(value_counts)
 
-    df = df.sort_values("count", ascending=False)
+    ques_value_counts_df = pd.concat(value_counts_list, ignore_index=True)
+
+    ques_value_counts_df = ques_value_counts_df.sort_values(
+        "total_coverage_percentage", ascending=False
+    )
 
     fig = px.bar(
-        df,
-        y="count",
-        x="thermal_questionnaire_split",
+        ques_value_counts_df,
+        x="questionnaire",
+        y="percentage",
+        color="response_value",
         labels={
-            "count": "No. of Studies [-]",
-            "thermal_questionnaire_split": "Thermal Questionnaire [-]",
+            "percentage": "Coverage Percentage [%]",
+            "questionnaire": "Comfort Questionnaire",
+            "response_value": "Response Value",
         },
         width=CHART_LAYOUT.width.value,
-        height=CHART_LAYOUT.height.value,
+        height=1.5 * CHART_LAYOUT.height.value,
         template=CHART_LAYOUT.template.value,
+        category_orders={
+            "questionnaire": ques_value_counts_df["questionnaire"].unique()
+        },
     )
 
     return fig
@@ -358,7 +374,7 @@ def parallel__questionnaires_scales(df):
         dimensions=["thermal_questionnaire_split", "feedback-scales"],
         labels={
             "feedback-scales": "Question Scaling [-]",
-            "thermal_questionnaire_split": "Thermal Questionnaire [-]",
+            "thermal_questionnaire_split": "Thermal Comfort Questionnaire [-]",
         },
         width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
@@ -449,7 +465,7 @@ def heatmap_protocol(df):
         x=protocol_columns.columns,
         y=protocol_columns.index,
         aspect=0.5,
-        color_continuous_scale=["White", "SlateBlue"],  # Colors for 0 and 1
+        color_continuous_scale=["White", custom_colors[0]],
         width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
         template=CHART_LAYOUT.template.value,
@@ -488,7 +504,7 @@ def heatmap_selection(df):
         x=protocol_columns.columns,
         y=protocol_columns.index,
         aspect=0.5,
-        color_continuous_scale=["White", "MediumVioletRed"],  # Colors for 0 and 1
+        color_continuous_scale=["White", custom_colors[-1]],
         width=CHART_LAYOUT.width.value,
         height=CHART_LAYOUT.height.value,
         template=CHART_LAYOUT.template.value,
@@ -506,6 +522,30 @@ def heatmap_selection(df):
         yaxis_title="Selection Criteria [-]",
         xaxis=dict(tickmode="linear", showticklabels=False, ticks=""),
         yaxis=dict(tickmode="linear"),
+    )
+
+    return fig
+
+
+def bar_data_access(df):
+
+    unique_studies = get_unique_studies(df)
+    unique_values = unique_studies["data-avail"].unique()
+
+    fig = px.bar(
+        unique_studies,
+        x="data-avail",
+        color="data-avail",
+        color_discrete_sequence=custom_colors[: (len(unique_values))],
+        width=CHART_LAYOUT.width.value,
+        height=CHART_LAYOUT.height.value,
+        template=CHART_LAYOUT.template.value,
+    )
+
+    fig.update_layout(
+        xaxis_title="Data Availability [-]",
+        yaxis_title="Number of Studies [-]",
+        xaxis=dict(tickmode="linear"),
     )
 
     return fig

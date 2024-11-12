@@ -25,7 +25,8 @@ def layout():
             dbc.Row(
                 dbc.Col(
                     children=[
-                        dcc.Store(id="filtered-data-store", storage_type="session"),
+                        # dcc.Store(id="filtered-data-store", storage_type="session"),
+                        # dcc.Location(id="url", refresh=False),
                         html.H4(TextPageHeading.physiology.value),
                     ]
                 ),
@@ -94,19 +95,3 @@ def update_charts(data):
         body_site_map(filtered_df),
         sunburst_sensors(filtered_df),
     )
-
-
-@callback(
-    Output("exp-id-count", "children"),
-    Output("data-count", "children"),
-    [Input("filtered-data-store", "data")],
-)
-def update_infocard(data):
-
-    json_data = StringIO(data)
-    df = pd.read_json(json_data, orient="split")
-
-    unique_exp_ids = df["exp-id"].nunique()
-    total_data_points = len(df)
-
-    return unique_exp_ids, total_data_points

@@ -29,7 +29,7 @@ def layout():
             dbc.Row(
                 dbc.Col(
                     children=[
-                        dcc.Store(id="filtered-data-store", storage_type="session"),
+                        # dcc.Store(id="filtered-data-store", storage_type="session"),
                         html.H4(TextPageHeading.environment.value),
                     ]
                 ),

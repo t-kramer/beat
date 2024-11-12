@@ -31,7 +31,7 @@ def data_table(df):
         style_cell={
             "minWidth": "100px",  # Minimum column width
             "maxWidth": "250px",  # Maximum column width
-            "overflow": "hidden",
+            # "overflow": "hidden",
             "textOverflow": "ellipsis",
             "textAlign": "left",
         },

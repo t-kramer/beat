@@ -10,129 +10,11 @@ from utils.config_file import (
 )
 
 
-def standard_tab_layout(page_heading, figures: list):
-
-    graph_components = [dcc.Graph(figure=fig) for fig in figures]
-
-    return dbc.Container(
-        children=[
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        html.Div("Chosen Parameter here."),
-                        width=PAGE_LAYOUT.column_width_secondary.value,
-                    ),
-                    dbc.Col(dbc.Container(html.H5(page_heading))),
-                ]
-            ),
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            dbc.Card(
-                                dbc.CardBody(
-                                    [
-                                        html.P("Infocard here", className="card-text"),
-                                    ]
-                                ),
-                            )
-                        ],
-                        align=PAGE_LAYOUT.infocard_align.value,
-                        width=PAGE_LAYOUT.column_width_secondary.value,
-                    ),
-                    dbc.Col(
-                        dbc.Row(
-                            children=graph_components,
-                        ),
-                        width=PAGE_LAYOUT.column_width_primary.value,
-                    ),
-                ]
-            ),
-        ]
-    )
-
-
-def grid_tab_layout(page_heading, figures: list):
-    graph_components = [dcc.Graph(figure=fig) for fig in figures]
-
-    def get_graph_component(index):
-        return (
-            graph_components[index] if index < len(graph_components) else html.Div()
-        )  # in case there are less than 4 figures
-
-    return dbc.Container(
-        children=[
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        standard_dropdown(),
-                        width=PAGE_LAYOUT.column_width_secondary.value,
-                    ),
-                    dbc.Col(dbc.Container(html.H4(page_heading))),
-                ]
-            ),
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            dbc.Card(
-                                dbc.CardBody(
-                                    [
-                                        html.P("Infocard here", className="card-text"),
-                                    ]
-                                ),
-                            )
-                        ],
-                        align=PAGE_LAYOUT.infocard_align.value,
-                        width=PAGE_LAYOUT.column_width_secondary.value,
-                    ),
-                    dbc.Col(
-                        get_graph_component(0),
-                        width=PAGE_LAYOUT.column_width_grid.value,
-                    ),
-                    dbc.Col(
-                        get_graph_component(1),
-                        width=PAGE_LAYOUT.column_width_grid.value,
-                    ),
-                ]
-            ),
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            dbc.Card(
-                                dbc.CardBody(
-                                    [
-                                        html.P("Infocard here", className="card-text"),
-                                    ]
-                                ),
-                            )
-                        ],
-                        align=PAGE_LAYOUT.infocard_align.value,
-                        width=PAGE_LAYOUT.column_width_secondary.value,
-                    ),
-                    dbc.Col(
-                        dbc.Row(
-                            children=get_graph_component(2),
-                        ),
-                        width=PAGE_LAYOUT.column_width_grid.value,
-                    ),
-                    dbc.Col(
-                        dbc.Row(
-                            children=get_graph_component(3),
-                        ),
-                        width=PAGE_LAYOUT.column_width_grid.value,
-                    ),
-                ]
-            ),
-        ]
-    )
-
-
 def tabs():
     return dbc.Container(
         children=[
             html.Div(id="initial-load", style={"display": "none"}),
+            dcc.Location(id="url", refresh=True),
             dbc.Row(
                 dbc.Nav(
                     [
@@ -148,5 +30,7 @@ def tabs():
             ),
             html.Hr(),
             dbc.Row(dash.page_container),
+            dcc.Store(id="filter-selection-store", storage_type="session"),
+            dcc.Store(id="filtered-data-store", storage_type="session"),
         ]
     )

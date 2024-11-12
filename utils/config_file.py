@@ -36,6 +36,7 @@ class ElementsIDs(Enum):
     CHART_SELECTION = "id-chart-selection"
     CHART_CONTAINER = "chart-container"
     CHART_BAR_YEAR = "id-chart-bar-year"
+    CHART_BAR_DATA_AVAILABILITY = "id-chart-bar-data-availability"
     CHART_MAP_COUNTRY = "id-chart-choropleth-country"
     CHART_MAP_BODY = "id-chart-chart-body"
     CHART_PIE_BUILDING_TYPE = "id-chart-pie-building-type"
@@ -61,6 +62,7 @@ class LABELS(Enum):
     BY_YEAR: str = "By Year"
     BY_COUNTRY: str = "By Country"
     BY_BUILDING_TYPE: str = "By Building Type"
+    DATA_ACCESS: str = "Data Access"
 
 
 class Config(Enum):
@@ -69,7 +71,7 @@ class Config(Enum):
 
 class URLS(Enum):
     HOME: str = "/"
-    EXPERIMENT: str = "/experiment"
+    EXPERIMENT: str = "/experiments"
     PHYSIOLOGY: str = "/physiology"
     ENVIRONMENT: str = "/environment"
     PARTICIPANTS: str = "/participants"

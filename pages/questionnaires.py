@@ -21,42 +21,41 @@ dash.register_page(__name__, path=URLS.QUESTIONNAIRE.value, order=6)
 
 def layout():
     return dbc.Container(
-        dbc.Row(
-            children=[
-                dcc.Store(id="selected-parameter-store", storage_type="session"),
-                dcc.Store(id="filtered-data-store", storage_type="session"),
-                dbc.Col(
-                    children=[
-                        html.Div(
-                            id="id-selected-parameter-text",
-                            className="mb-3",
-                        ),
-                        infocard(),
-                    ],
-                    width=PAGE_LAYOUT.column_width_secondary.value,
-                ),
-                dbc.Col(
-                    children=[
-                        html.H4(TextPageHeading.questionnaire.value),
-                        html.Div(ChartTitles.bar_thermal_questionnaire.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_BAR_THERMAL_QUESTIONNAIRE.value,
-                        ),
-                        html.Div(ChartTitles.parallel_questionnaire_scales.value),
-                        dcc.Graph(
-                            id=ElementsIDs.CHART_PARALLEL_QUESTIONNAIRE_SCALES.value,
-                        ),
-                    ],
-                    width=PAGE_LAYOUT.column_width_primary.value,
-                ),
-            ]
-        )
+        [
+            dbc.Row(
+                children=[
+                    # dcc.Store(id="filtered-data-store", storage_type="session"),
+                    html.H4(TextPageHeading.questionnaire.value),
+                ]
+            ),
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            infocard(),
+                        ],
+                        width=PAGE_LAYOUT.column_width_secondary.value,
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Label(ChartTitles.bar_thermal_questionnaire.value),
+                            dcc.Loading(
+                                type=ElementsIDs.LOADING_TYPE.value,
+                                children=dcc.Graph(
+                                    id=ElementsIDs.CHART_BAR_THERMAL_QUESTIONNAIRE.value,
+                                ),
+                            ),
+                        ],
+                        width=PAGE_LAYOUT.column_width_primary.value,
+                    ),
+                ]
+            ),
+        ]
     )
 
 
 # update graphs
 @callback(
-    Output(ElementsIDs.CHART_PARALLEL_QUESTIONNAIRE_SCALES.value, "figure"),
     Output(ElementsIDs.CHART_BAR_THERMAL_QUESTIONNAIRE.value, "figure"),
     [Input("filtered-data-store", "data")],
 )
@@ -65,4 +64,4 @@ def update_charts(data):
         raise dash.exceptions.PreventUpdate
 
     df = pd.read_json(data, orient="split")
-    return parallel__questionnaires_scales(df), bar_thermal_questionnaires(df)
+    return bar_thermal_questionnaires(df)

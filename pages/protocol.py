@@ -33,7 +33,7 @@ def layout():
         [
             dbc.Row(
                 children=[
-                    dcc.Store(id="filtered-data-store", storage_type="session"),
+                    # dcc.Store(id="filtered-data-store", storage_type="session"),
                     html.H4(TextPageHeading.protocol.value),
                 ]
             ),

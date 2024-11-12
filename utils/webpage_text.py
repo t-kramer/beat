@@ -46,7 +46,7 @@ class ChartTitles(Enum):
     chart_pie_age = "Age Distribution."
     chart_histogram_sex = "Sex Distribution."
     bar_environmental = "Recorded Environmental Parameters."
-    bar_thermal_questionnaire = "Thermal Questionnaires ADD SCALES."
+    bar_thermal_questionnaire = "Thermal Comfort Questionnaires."
     parallel_questionnaire_scales = "Questionnaires & Scales."
     box_session_length = "Session Length."
     box_normalisation_length = "Normalisation Length."

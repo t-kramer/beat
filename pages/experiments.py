@@ -7,7 +7,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html, Input, Output, State, callback
 
-from components.charts import bar_year, map_country, pie_building_type
+from components.charts import bar_year, map_country, pie_building_type, bar_data_access
 from components.data_table import data_table
 from components.input import (
     parameter_checklist,
@@ -17,9 +17,11 @@ from components.input import (
     year_slider,
 )
 
-from utils.config_file import PAGE_LAYOUT, URLS, ElementsIDs, LABELS
+from components.infocard import infocard_experiments
 
+from utils.config_file import PAGE_LAYOUT, URLS, ElementsIDs, LABELS
 from utils.webpage_text import TextInfo, FilterText
+from utils.helper_functions import get_unique_studies
 
 dash.register_page(__name__, path=URLS.EXPERIMENT.value, order=1)
 
@@ -30,8 +32,6 @@ df = pd.read_csv("./data/test.csv")
 def layout():
     return dbc.Container(
         children=[
-            dcc.Store(id="filter-selection-store", storage_type="session"),
-            dcc.Store(id="filtered-data-store", storage_type="session"),
             dbc.Row(
                 [
                     dbc.Col(
@@ -68,17 +68,7 @@ def layout():
                 children=[
                     dbc.Col(
                         children=[
-                            dbc.Card(
-                                dbc.CardBody(
-                                    [
-                                        html.B("Summary"),
-                                        html.P(
-                                            "Use this card to summarise information from table "
-                                            "in a few lines.",
-                                        ),
-                                    ]
-                                ),
-                            ),
+                            infocard_experiments(),
                         ],
                         width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
@@ -107,6 +97,13 @@ def layout():
                                         ),
                                         label=LABELS.BY_BUILDING_TYPE.value,
                                     ),
+                                    dbc.Tab(
+                                        dcc.Graph(
+                                            id=ElementsIDs.CHART_BAR_DATA_AVAILABILITY.value,
+                                            figure=bar_data_access(df),
+                                        ),
+                                        label=LABELS.DATA_ACCESS.value,
+                                    ),
                                 ]
                             ),
                         ],
@@ -126,7 +123,7 @@ def layout():
     )
 
 
-# 1.) Set options and values based on initial data
+# 1.) Set options and values based on either initial data or stored filters
 @callback(
     [
         Output("study-type-checklist", "options"),
@@ -135,14 +132,17 @@ def layout():
         Output("building-typology-checklist", "value"),
         Output("country-dropdown", "options"),
         Output("country-dropdown", "value"),
+        Output("parameter-checklist", "options"),
+        Output("parameter-checklist", "value"),
         Output("year-slider", "value"),
         Output("year-slider", "min"),
         Output("year-slider", "max"),
         Output("year-slider", "marks"),
     ],
     [Input("initial-load", "children")],
+    [State("filter-selection-store", "data")],
 )
-def set_filter_options(_):
+def set_filter_options(_, stored_data):
 
     def generate_options_and_values(column):
         unique_values = sorted(df[column].dropna().unique(), reverse=True)
@@ -153,23 +153,47 @@ def set_filter_options(_):
     study_type_options, study_values = generate_options_and_values("exp-type")
     typology_options, typology_values = generate_options_and_values("function")
     country_options, country_values = generate_options_and_values("country")
+    parameter_options, parameter_values = generate_options_and_values(
+        "physio-parameter"
+    )
 
     # slider settings
     year_min = df["pub-year"].min()
     year_max = df["pub-year"].max()
     year_marks = {year: str(year) for year in range(year_min, year_max + 1)}
-    years_options = [year_min, year_max]
+    years_values = [year_min, year_max]
 
-    print("initial options and values set!")  #! Remove later
+    if stored_data is None:
+
+        print("initial options and values set!")  #! Remove later
+
+        return (
+            study_type_options,
+            study_values,
+            typology_options,
+            typology_values,
+            country_options,
+            country_values,
+            parameter_options,
+            parameter_values,
+            years_values,
+            year_min,
+            year_max,
+            year_marks,
+        )
+
+    print("previous filters restored!")  #! Remove later
 
     return (
         study_type_options,
-        study_values,
+        stored_data["study_type_value"],
         typology_options,
-        typology_values,
+        stored_data["building_typology_value"],
         country_options,
-        country_values,
-        years_options,
+        stored_data["country_value"],
+        parameter_options,
+        stored_data["parameters_value"],
+        stored_data["years_value"],
         year_min,
         year_max,
         year_marks,
@@ -212,9 +236,11 @@ def store_selected_filters(parameters, study_type, typology, country, years):
     ],
 )
 def filter_data(loaded_filters):
+    if loaded_filters is None:
+        raise dash.exceptions.PreventUpdate
 
-    min_year, max_year = loaded_filters["years_value"]
-    all_years = list(range(min_year, max_year + 1))
+    years = loaded_filters["years_value"]
+    all_years = list(range(min(years), max(years) + 1))
 
     parameters = loaded_filters["parameters_value"]
     study_type = loaded_filters["study_type_value"]
@@ -242,13 +268,16 @@ def filter_data(loaded_filters):
         Output(ElementsIDs.CHART_BAR_YEAR.value, "figure"),
         Output(ElementsIDs.CHART_MAP_COUNTRY.value, "figure"),
         Output(ElementsIDs.CHART_PIE_BUILDING_TYPE.value, "figure"),
+        Output(ElementsIDs.CHART_BAR_DATA_AVAILABILITY.value, "figure"),
         Output("data-table", "data"),
+        Output("data-table", "tooltip_data"),
     ],
     [Input("filtered-data-store", "data")],
 )
 def update_graphs_datatable(data):
     if data is None:
-        return dash.no_update  # Skip update if no data is stored
+        return dash.no_update
+
     try:
         json_data = StringIO(data)
         filtered_df = pd.read_json(json_data, orient="split")
@@ -260,41 +289,47 @@ def update_graphs_datatable(data):
         by="pub-year", ascending=True, inplace=False
     )
 
+    # dynamic tooltip data
+    tooltip_data = [
+        {
+            column: {
+                "value": str(value) if value is not None else "",
+                "type": "markdown",
+            }
+            for column, value in row.items()
+        }
+        for row in updated_table_data.to_dict("records")
+    ]
+
     return (
         bar_year(filtered_df),
         map_country(filtered_df),
         pie_building_type(filtered_df),
+        bar_data_access(filtered_df),
         updated_table_data.to_dict("records"),
+        tooltip_data,
     )
 
 
-# @callback(
-#     Output("parameter_checklist", "value"),
-#     Input("selected-parameter-store", "data"),
-#     State("parameter_checklist", "value"),
-# )
-# def load_checklist_state(loaded_data, current_value):
-#     if loaded_data is None:
-#         return current_value  # Return current value if no stored data
-#     return loaded_data
+@callback(
+    Output("exp-id-count", "children"),
+    Output("participant-count", "children"),
+    Output("country-count", "children"),
+    Output("data-availability-count", "children"),
+    [Input("filtered-data-store", "data")],
+)
+def update_infocard(data):
 
+    json_data = StringIO(data)
+    df = pd.read_json(json_data, orient="split")
 
-# @callback(
-#     Output("id-selected-parameter-text", "children"),
-#     [Input("selected-parameter-store", "data")],
-# )
-# def update_infocard(selected_parameters):
-#     if selected_parameters is None:
-#         raise dash.exceptions.PreventUpdate
+    unique_studies = get_unique_studies(df)
 
-#     return dbc.Container(
-#         children=[
-#             html.B(TextInfo.selected_parameters.value),
-#             html.Div(
-#                 [
-#                     html.Div(param, className="parameter-item")
-#                     for param in selected_parameters
-#                 ]
-#             ),
-#         ]
-#     )
+    unique_exp_ids = len(unique_studies)
+    total_data_points = len(df)
+    unique_countries = df["country"].nunique()
+
+    unique_studies = get_unique_studies(df)
+    data_availability = (unique_studies["data-avail"] == "Available").sum()
+
+    return unique_exp_ids, total_data_points, unique_countries, data_availability
