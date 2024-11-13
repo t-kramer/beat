@@ -62,7 +62,7 @@ This is the official repository for BEAT, a tool supporting the design and execu
 
 We found that the lack of standardization across thermo-physiological experiments in buidlings represents a barrier for advancing knowledge in the field. We hope that by gathering and interactively visualizing metadata on thermo-physiological experiments, we can support the development of more consistent and fruitful research in the field.
 
-[//]: # ([![Product Name Screen Shot][product-screenshot]]&#40;https://example.com&#41;)
+![](assets/img/beat-beta.gif)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

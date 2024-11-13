@@ -141,7 +141,7 @@ def body_site_map(df):
             x=merged_df["x-coordinate"],
             y=merged_df["y-coordinate"],
             mode="markers",
-            marker=dict(size=merged_df["count"] * 1, color="#db1492", opacity=0.8),
+            marker=dict(size=merged_df["count"] * 1, color="#EA2551", opacity=0.8),
             text=merged_df["count"],  # Add the counts to the hover text
             hoverinfo="text",
         )

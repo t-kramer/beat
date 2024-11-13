@@ -58,6 +58,12 @@ def layout():
                         [
                             dbc.Label(FilterText.physiological_parameters.value),
                             parameter_checklist(),
+                            html.Br(),
+                            dbc.Button(
+                                "Reset Parameters",
+                                id="button-reset-filters",
+                                color="primary",
+                            ),
                         ],
                         width=PAGE_LAYOUT.column_width_secondary.value,
                     ),
