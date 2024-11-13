@@ -58,9 +58,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is the official repository for BEAT, a tool supporting the design and execution of thermo-physiological experiments in the built environment. We are currently developing the tool and are aiming to deploy a beta version soon. 
+This is the repository for BEAT, a tool supporting the design and execution of thermo-physiological experiments in the built environment. We are currently developing the tool and are aiming to deploy a beta version soon. Feel free to test the tool locally by using the instructions below.
 
-We found that the lack of standardization across thermo-physiological experiments in buidlings represents a barrier for advancing knowledge in the field. We hope that by gathering and interactively visualizing metadata on thermo-physiological experiments, we can support the development of more consistent and fruitful research in the field.
+We found that the lack of standardization across thermo-physiological experiments in buidlings represents a barrier for advancing knowledge in the field. We hope that by gathering and interactively visualizing metadata on thermo-physiological experiments, we can support the development of more consistent and fruitful research in the field. The current dataset includes studies conducted between 2022 and 2024. We are actively working on extending the underlying database to include older studies.
 
 ![](assets/img/beat-beta.gif)
 
