@@ -33,7 +33,6 @@ def layout():
         [
             dbc.Row(
                 children=[
-                    # dcc.Store(id="filtered-data-store", storage_type="session"),
                     html.H4(TextPageHeading.protocol.value),
                 ]
             ),
@@ -157,7 +156,7 @@ def layout():
     Output(ElementsIDs.CHART_SCATTER_TEST_TEMPS.value, "figure"),
     Output(ElementsIDs.CHART_BOX_SESSION_LENGTH.value, "figure"),
     Output(ElementsIDs.CHART_BOX_NORMALISATION_LENGTH.value, "figure"),
-    [Input("filtered-data-store", "data")],
+    [Input(ElementsIDs.STORE_DATA.value, "data")],
 )
 def update_charts(data):
     if data is None:

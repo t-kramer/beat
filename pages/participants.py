@@ -28,7 +28,6 @@ def layout():
         [
             dbc.Row(
                 children=[
-                    # dcc.Store(id="filtered-data-store", storage_type="session"),
                     html.H4(TextPageHeading.participants.value),
                 ]
             ),
@@ -106,7 +105,7 @@ def layout():
     Output(ElementsIDs.CHART_BOX_NO_PARTICIPANTS.value, "figure"),
     Output(ElementsIDs.CHART_PIE_AGE.value, "figure"),
     Output(ElementsIDs.CHART_HISTOGRAM_SEX.value, "figure"),
-    [Input("filtered-data-store", "data")],
+    [Input(ElementsIDs.STORE_DATA.value, "data")],
 )
 def update_charts(data):
     if data is None:

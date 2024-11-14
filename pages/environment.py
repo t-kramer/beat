@@ -29,7 +29,6 @@ def layout():
             dbc.Row(
                 dbc.Col(
                     children=[
-                        # dcc.Store(id="filtered-data-store", storage_type="session"),
                         html.H4(TextPageHeading.environment.value),
                     ]
                 ),
@@ -62,7 +61,7 @@ def layout():
 
 @callback(
     Output(ElementsIDs.CHART_BAR_ENVIRONMENTAL.value, "figure"),
-    [Input("filtered-data-store", "data")],
+    [Input(ElementsIDs.STORE_DATA.value, "data")],
 )
 def update_charts(data):
     if data is None:

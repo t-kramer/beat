@@ -61,7 +61,7 @@ def layout():
                             html.Br(),
                             dbc.Button(
                                 "Reset Parameters",
-                                id="button-reset-filters",
+                                id=ElementsIDs.BUTTON_RESET_FILTER.value,
                                 color="primary",
                             ),
                         ],
@@ -132,21 +132,21 @@ def layout():
 # 1.) Set options and values based on either initial data or stored filters
 @callback(
     [
-        Output("study-type-checklist", "options"),
-        Output("study-type-checklist", "value"),
-        Output("building-typology-checklist", "options"),
-        Output("building-typology-checklist", "value"),
-        Output("country-dropdown", "options"),
-        Output("country-dropdown", "value"),
-        Output("parameter-checklist", "options"),
-        Output("parameter-checklist", "value"),
-        Output("year-slider", "value"),
-        Output("year-slider", "min"),
-        Output("year-slider", "max"),
-        Output("year-slider", "marks"),
+        Output(ElementsIDs.CHECKLIST_STUDY_TYPE.value, "options"),
+        Output(ElementsIDs.CHECKLIST_STUDY_TYPE.value, "value"),
+        Output(ElementsIDs.CHECKLIST_BUILDING_TYPOLOGY.value, "options"),
+        Output(ElementsIDs.CHECKLIST_BUILDING_TYPOLOGY.value, "value"),
+        Output(ElementsIDs.DROPDOWN_COUNTRY.value, "options"),
+        Output(ElementsIDs.DROPDOWN_COUNTRY.value, "value"),
+        Output(ElementsIDs.CHECKLIST_PARAMETER.value, "options"),
+        Output(ElementsIDs.CHECKLIST_PARAMETER.value, "value"),
+        Output(ElementsIDs.SLIDER_YEAR.value, "value"),
+        Output(ElementsIDs.SLIDER_YEAR.value, "min"),
+        Output(ElementsIDs.SLIDER_YEAR.value, "max"),
+        Output(ElementsIDs.SLIDER_YEAR.value, "marks"),
     ],
     [Input("initial-load", "children")],
-    [State("filter-selection-store", "data")],
+    [State(ElementsIDs.STORE_FILTER.value, "data")],
 )
 def set_filter_options(_, stored_data):
 
@@ -208,13 +208,13 @@ def set_filter_options(_, stored_data):
 
 # 2.) Store filters when updated
 @callback(
-    Output("filter-selection-store", "data"),
+    Output(ElementsIDs.STORE_FILTER.value, "data"),
     [
-        Input("parameter-checklist", "value"),
-        Input("study-type-checklist", "value"),
-        Input("building-typology-checklist", "value"),
-        Input("country-dropdown", "value"),
-        Input("year-slider", "value"),
+        Input(ElementsIDs.CHECKLIST_PARAMETER.value, "value"),
+        Input(ElementsIDs.CHECKLIST_STUDY_TYPE.value, "value"),
+        Input(ElementsIDs.CHECKLIST_BUILDING_TYPOLOGY.value, "value"),
+        Input(ElementsIDs.DROPDOWN_COUNTRY.value, "value"),
+        Input(ElementsIDs.SLIDER_YEAR.value, "value"),
     ],
 )
 def store_selected_filters(parameters, study_type, typology, country, years):
@@ -235,10 +235,10 @@ def store_selected_filters(parameters, study_type, typology, country, years):
 # 3.) Filter data based on selected filters and store it
 @callback(
     [
-        Output("filtered-data-store", "data"),
+        Output(ElementsIDs.STORE_DATA.value, "data"),
     ],
     [
-        Input("filter-selection-store", "data"),
+        Input(ElementsIDs.STORE_FILTER.value, "data"),
     ],
 )
 def filter_data(loaded_filters):
@@ -275,10 +275,10 @@ def filter_data(loaded_filters):
         Output(ElementsIDs.CHART_MAP_COUNTRY.value, "figure"),
         Output(ElementsIDs.CHART_PIE_BUILDING_TYPE.value, "figure"),
         Output(ElementsIDs.CHART_BAR_DATA_AVAILABILITY.value, "figure"),
-        Output("data-table", "data"),
-        Output("data-table", "tooltip_data"),
+        Output(ElementsIDs.DATA_TABLE.value, "data"),
+        Output(ElementsIDs.DATA_TABLE.value, "tooltip_data"),
     ],
-    [Input("filtered-data-store", "data")],
+    [Input(ElementsIDs.STORE_DATA.value, "data")],
 )
 def update_graphs_datatable(data):
     if data is None:
@@ -317,12 +317,13 @@ def update_graphs_datatable(data):
     )
 
 
+# 5.) Update infocard
 @callback(
     Output("exp-id-count", "children"),
     Output("participant-count", "children"),
     Output("country-count", "children"),
     Output("data-availability-count", "children"),
-    [Input("filtered-data-store", "data")],
+    [Input(ElementsIDs.STORE_DATA.value, "data")],
 )
 def update_infocard(data):
 

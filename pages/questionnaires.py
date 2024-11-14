@@ -7,7 +7,6 @@ from dash import dcc, html, Input, Output, callback
 
 from components.charts import (
     bar_thermal_questionnaires,
-    parallel__questionnaires_scales,
 )
 
 from utils.webpage_text import TextPageHeading, ChartTitles
@@ -24,7 +23,6 @@ def layout():
         [
             dbc.Row(
                 children=[
-                    # dcc.Store(id="filtered-data-store", storage_type="session"),
                     html.H4(TextPageHeading.questionnaire.value),
                 ]
             ),
@@ -57,7 +55,7 @@ def layout():
 # update graphs
 @callback(
     Output(ElementsIDs.CHART_BAR_THERMAL_QUESTIONNAIRE.value, "figure"),
-    [Input("filtered-data-store", "data")],
+    [Input(ElementsIDs.STORE_DATA.value, "data")],
 )
 def update_charts(data):
     if data is None:

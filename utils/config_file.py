@@ -25,6 +25,7 @@ class DataKeys(Enum):
 
 
 class ElementsIDs(Enum):
+    BUTTON_RESET_FILTER = "button-reset-filters"
     NAVBAR = "id-navbar"
     NAVBAR_COLLAPSE = "navbar-collapse"
     NAVBAR_TOGGLER = "navbar-toggle"
@@ -52,7 +53,15 @@ class ElementsIDs(Enum):
     CHART_SCATTER_TEST_TEMPS = "id-chart-scatter-test-temps"
     CHART_HEATMAP_PROTOCOL = "id-chart-heatmap-protocol"
     CHART_HEATMAP_SELECTION = "id-chart-heatmap-selection"
-    CHECKLIST_INPUT = "checklist-input"
+    CHECKLIST_STUDY_TYPE = "study-type-checklist"
+    CHECKLIST_BUILDING_TYPOLOGY = "building-typology-checklist"
+    CHECKLIST_PARAMETER = "parameter-checklist"
+    DROPDOWN_COUNTRY = "country-dropdown"
+    SLIDER_YEAR = "year-slider"
+    STORE_DATA = "filtered-data-store"
+    STORE_FILTER = "filter-selection-store"
+    DATA_TABLE = "data-table"
+
     FOOTER = "id-footer"
     LOADING_TYPE = "circle"
     URL = "url"
