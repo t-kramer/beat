@@ -4,7 +4,6 @@
 __pycache__/
 
 # Jupyter Notebooks and checkpoints
-test-graphs.ipynb
 .ipynb_checkpoints/
 
 # data files
